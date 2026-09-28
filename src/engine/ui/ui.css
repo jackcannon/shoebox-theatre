@@ -1,0 +1,288 @@
+.shoebox-root {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+  font-family: 'Pixelify Sans', system-ui, sans-serif;
+  color: #f5ecd7;
+}
+
+.shoebox-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.shoebox-ui {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shoebox-panel {
+  box-sizing: border-box;
+  color: #f5ecd7;
+  background: linear-gradient(
+    180deg,
+    rgba(34, 48, 102, 0.9) 0%,
+    rgba(16, 25, 62, 0.92) 55%,
+    rgba(8, 12, 36, 0.94) 100%
+  );
+  border: 2px solid #d9b56a;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 2px rgba(6, 8, 24, 0.85),
+    inset 0 0 0 3px rgba(217, 181, 106, 0.55),
+    inset 0 16px 20px -14px rgba(255, 244, 218, 0.3),
+    0 0 0 2px rgba(12, 8, 4, 0.9),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+}
+
+.shoebox-dialogue-area {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(28px, 5vh, 56px);
+  width: min(880px, 92vw);
+  transform: translateX(-50%);
+}
+
+.shoebox-dialogue {
+  position: relative;
+  min-height: 130px;
+  padding: clamp(20px, 3vh, 28px) clamp(20px, 3.5vw, 36px);
+  font-size: clamp(17px, 2.3vw, 24px);
+  line-height: 1.45;
+  animation: shoebox-rise 0.18s ease-out;
+}
+
+.shoebox-nameplate {
+  position: absolute;
+  top: 0;
+  left: clamp(16px, 3vw, 28px);
+  transform: translateY(-60%);
+  padding: 2px 16px 4px;
+  font-size: clamp(14px, 1.8vw, 19px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: #fff4da;
+  background: linear-gradient(180deg, #2c3d82 0%, #172456 100%);
+  border: 2px solid #d9b56a;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 244, 218, 0.22),
+    0 0 0 2px rgba(12, 8, 4, 0.9);
+}
+
+.shoebox-dialogue-text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.shoebox-dialogue-hidden {
+  visibility: hidden;
+}
+
+.shoebox-dialogue-next {
+  position: absolute;
+  right: clamp(16px, 2.4vw, 24px);
+  bottom: 10px;
+  font-size: 0.7em;
+  color: #d9b56a;
+  animation: shoebox-bob 0.9s ease-in-out infinite;
+}
+
+.shoebox-choice {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 18px);
+  min-width: 160px;
+  margin: 0;
+  padding: 12px 28px 12px 18px;
+  list-style: none;
+  font-size: clamp(16px, 2.1vw, 22px);
+  line-height: 1.55;
+  animation: shoebox-rise 0.14s ease-out;
+}
+
+.shoebox-choice-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  white-space: nowrap;
+  color: rgba(245, 236, 215, 0.68);
+}
+
+.shoebox-choice-option.is-active {
+  color: #fff4da;
+}
+
+.shoebox-choice-cursor {
+  font-size: 0.7em;
+  color: #d9b56a;
+  visibility: hidden;
+}
+
+.shoebox-choice-option.is-active .shoebox-choice-cursor {
+  visibility: visible;
+  animation: shoebox-nudge 0.8s ease-in-out infinite;
+}
+
+.shoebox-banner {
+  position: absolute;
+  top: clamp(16px, 5vh, 44px);
+  left: 0;
+  padding: 10px clamp(48px, 8vw, 96px) 12px clamp(20px, 4vw, 48px);
+  background: linear-gradient(90deg, rgba(10, 16, 42, 0.86) 0%, rgba(10, 16, 42, 0.6) 60%, rgba(10, 16, 42, 0) 100%);
+  opacity: 0;
+  animation: shoebox-banner 2.8s ease forwards;
+}
+
+.shoebox-banner::before,
+.shoebox-banner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #d9b56a 0%, rgba(217, 181, 106, 0.6) 60%, rgba(217, 181, 106, 0) 100%);
+}
+
+.shoebox-banner::before {
+  top: 0;
+}
+
+.shoebox-banner::after {
+  bottom: 0;
+}
+
+.shoebox-banner-text {
+  font-size: clamp(20px, 2.8vw, 32px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #f5ecd7;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.7),
+    0 0 14px rgba(217, 181, 106, 0.45);
+}
+
+.shoebox-banner-text::before {
+  content: '◆';
+  margin-right: 0.6em;
+  font-size: 0.55em;
+  vertical-align: middle;
+  color: #d9b56a;
+}
+
+.shoebox-fade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+}
+
+.shoebox-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: radial-gradient(ellipse at center, #141c3a 0%, #05060d 70%);
+}
+
+.shoebox-loading-title {
+  margin: 0;
+  padding: 0 5vw;
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: #f5ecd7;
+  text-shadow:
+    0 3px 0 #000,
+    0 0 24px rgba(217, 181, 106, 0.35);
+}
+
+.shoebox-loading-bar {
+  width: min(360px, 70vw);
+  height: 10px;
+  overflow: hidden;
+  background: rgba(8, 12, 36, 0.9);
+  border: 2px solid #d9b56a;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2px rgba(12, 8, 4, 0.9);
+}
+
+.shoebox-loading-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b8893e, #f2d38a);
+  transition: width 0.15s linear;
+}
+
+.shoebox-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  max-width: calc(100vw - 24px);
+  font-size: clamp(10px, 1.1vw, 13px);
+  letter-spacing: 0.02em;
+  text-align: right;
+  color: rgba(245, 236, 215, 0.62);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+@keyframes shoebox-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shoebox-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes shoebox-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes shoebox-banner {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  14% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
