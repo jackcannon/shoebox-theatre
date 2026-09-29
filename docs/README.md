@@ -18,7 +18,7 @@ The docs describe the code as it is now. If a doc and the code disagree, the cod
 
 | Doc | Covers |
 |---|---|
-| [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output |
+| [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output, Dokku deployment |
 | [architecture.md](architecture.md) | Folder map, dependency rules, `GameRuntime` vs the UI store, startup and map loading, frame order, registries, public API |
 | [coordinates-and-units.md](coordinates-and-units.md) | World axes, tile and footprint coordinates, heights, prefab local space, texel density |
 | [world.md](world.md) | `TileMap`, tile types and surfaces, `World`, `Character`, movement and collision, NPC AI, interaction, warps, triggers |
@@ -39,6 +39,7 @@ Before every commit, match the files you changed against this table and update e
 | If you changed... | Check and update |
 |---|---|
 | `package.json`, `vite.config.ts`, `tsconfig*.json`, `.oxlintrc.json`, `index.html`, `public/` | stack.md, and testing.md for test config |
+| `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
 | `src/main.tsx`, `src/App.tsx`, `src/engine/Shoebox.tsx`, `src/engine/index.ts`, `src/engine/types.ts`, `src/engine/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
 | `src/engine/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |
 | `src/engine/core/Input.ts` | architecture.md (input), README.md (controls), ui.md if the controls hint text changes |

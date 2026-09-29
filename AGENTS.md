@@ -91,7 +91,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 - On this machine, prefix the first node-based command in a session with `source ~/.nvm/nvm.sh &&`, so nvm is loaded. Node must be `^20.19.0 || >=22.12.0`.
 - Use the yarn scripts for project tasks: `yarn dev`, `yarn test`, `yarn build`, `yarn lint`. Use `bun` to run one-off `.ts` or `.js` scripts.
 - The package manager is yarn 1 (`yarn.lock`). Don't add, remove or upgrade dependencies without asking. If you do change them, update [docs/stack.md](docs/stack.md) and commit `yarn.lock`.
-- Never run `npm install` or `npm ci`. They create a `package-lock.json` and rewrite `yarn.lock`.
+- Never run `npm install` or `npm ci`. They create a `package-lock.json` and rewrite `yarn.lock`, and a second lockfile makes the Dokku build fail ([docs/stack.md](docs/stack.md#deployment)).
 - The dev server uses port 5173. Check it isn't already running (`lsof -nP -iTCP:5173 -sTCP:LISTEN`) before you start one. Reuse the one that's running, and don't kill a server you didn't start without a reason.
 - Put scratch files in `.agent-tmp/` and durable notes, plans and summaries in `.agent-files/`. Both are git-ignored on this machine through `.git/info/exclude`. Never commit them, and never reference them from code or docs.
 

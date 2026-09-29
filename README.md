@@ -480,6 +480,22 @@ __shoebox.warp({ map: 'lab', x: 7, y: 10 })
 __shoebox.flags.set('metMom')
 ```
 
+## Deployment
+
+The game deploys to [Dokku](https://dokku.com) as a static site. Buildpacks install the dependencies with yarn, run `yarn build`, and serve `dist/` with nginx. The files involved:
+
+- `.buildpacks`: the env, Node and nginx buildpacks, in that order.
+- `.dokku.env`: sets `NGINX_ROOT='dist'`.
+- `.static`: an empty file that enables the nginx buildpack.
+
+Push `master` to your Dokku remote to deploy:
+
+```bash
+git push <dokku-remote> master
+```
+
+See [docs/stack.md](docs/stack.md#deployment) for how the buildpacks work.
+
 ## Credits
 
 - All art is generated procedurally in code: terrain, props, characters, water and light effects. The project uses no third-party game assets, and the village, characters and dialogue are original.

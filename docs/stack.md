@@ -25,7 +25,7 @@ There is no router, CSS framework, state library other than zustand, or R3F help
 | `oxlint` | 1 | Linting |
 | `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | — | Types |
 
-Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package manager is yarn 1 (classic) with `yarn.lock`. There is no `package-lock.json`.
+Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package manager is yarn 1 (classic) with `yarn.lock`. There is no `package-lock.json`, and the Dokku build fails if one is added (see [Deployment](#deployment)).
 
 ## Scripts
 
@@ -53,6 +53,26 @@ Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package ma
 - **`.oxlintrc.json`**: the `react`, `typescript` and `oxc` plugins. `react/rules-of-hooks` is an error, and `react/only-export-components` is a warning with `allowConstantExport`.
 - **`index.html`**: title "Mossvale — Shoebox Theatre Demo", an inline `html,body,#root{margin:0;height:100%;background:#000}` style, and the `/src/main.tsx` module entry.
 - **`.gitignore`**: the Vite scaffold defaults (`node_modules`, `dist`, `*.local`, logs, editor folders). The agent scratch folders `.agent-files/` and `.agent-tmp/` are excluded per machine (in `.git/info/exclude`), not by `.gitignore`.
+
+## Deployment
+
+The game deploys to Dokku as a static site. The server builds it from source on every push; `dist/` is not committed. Three files at the repo root control the build, and there is no `Procfile`:
+
+- **`.buildpacks`** lists the buildpacks Dokku runs, in this order:
+  1. `https://github.com/jackcannon/heroku-buildpack-env` loads `.dokku.env` into the build environment.
+  2. `https://github.com/jackcannon/heroku-buildpack-node` installs Node and yarn, runs `yarn install --frozen-lockfile`, then `yarn run build`, which writes `dist/`.
+  3. `https://github.com/jackcannon/heroku-buildpack-nginx` compiles nginx, moves the app into `/app/www`, and makes nginx the `web` process.
+- **`.dokku.env`** sets `NGINX_ROOT='dist'`, so nginx serves `/app/www/dist`. The file is committed, so it must never hold secrets.
+- **`.static`** is empty. The nginx buildpack only runs when it exists.
+
+Constraints:
+
+- `package.json` has no `engines` field, so the Node buildpack installs its default Node 22.x line, which satisfies Vite 8. yarn is 1.22.x.
+- The Node buildpack stops with "Multiple lockfiles found" if `yarn.lock` sits next to a `package-lock.json` or `pnpm-lock.yaml`. `npm install` creates a `package-lock.json` and rewrites `yarn.lock`, so install dependencies with yarn only.
+- `yarn install --frozen-lockfile` fails if `yarn.lock` doesn't match `package.json`. Commit `yarn.lock` with every dependency change.
+- nginx uses the buildpack's default config: an unknown path returns 404, not `index.html`. The game has no client-side routes, so nothing needs that fallback.
+
+To deploy, push `master` to the Dokku remote: `git push <dokku-remote> master`.
 
 ## Why this stack
 
