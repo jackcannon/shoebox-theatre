@@ -19,7 +19,6 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 - **The loop always renders.** It never idles, even when nothing changes.
 - **Upright sprites overlap.** Side-by-side characters can touch while talking, and a character standing directly behind another is partly hidden. This is normal for upright sprite billboards.
 - **Window glass reads near-white in interiors**, due to its emissive glass, the additive light shaft and bloom.
-- **Two lockfiles.** `package-lock.json` (npm) is the one the docs and scripts assume. A `yarn.lock` from a local `yarn install` also exists; keep them in sync, or delete one, before relying on either.
 
 ## Build and lint
 

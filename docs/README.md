@@ -18,7 +18,7 @@ The docs describe the code as it is now. If a doc and the code disagree, the cod
 
 | Doc | Covers |
 |---|---|
-| [stack.md](stack.md) | Dependencies, versions, npm scripts, TypeScript/Vite/Vitest/oxlint config, build output |
+| [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output |
 | [architecture.md](architecture.md) | Folder map, dependency rules, `GameRuntime` vs the UI store, startup and map loading, frame order, registries, public API |
 | [coordinates-and-units.md](coordinates-and-units.md) | World axes, tile and footprint coordinates, heights, prefab local space, texel density |
 | [world.md](world.md) | `TileMap`, tile types and surfaces, `World`, `Character`, movement and collision, NPC AI, interaction, warps, triggers |

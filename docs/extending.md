@@ -13,7 +13,7 @@ First decide whether the change is **content** (`src/game`) or **engine** (`src/
 2. Write `tiles` as equal-length rows (north first), and a `palette` built from `TILES` presets (`{ ...TILES.wall, side: 'labWall' }`).
 3. Add `objects`, `npcs`, `warps` and `triggers`, remembering that `y` is the row. Use `environment` (reuse `outdoorDay`/`indoorWarm`) and `camera` (reuse `interiorCamera` for rooms). Give outdoor maps a `border`.
 4. Register it in `config.maps` and add warps both ways (see the door convention in [world.md](world.md#warps-and-triggers)).
-5. Run `npm test`, because `maps.test.ts` checks the new map, then check it in the browser.
+5. Run `yarn test`, because `maps.test.ts` checks the new map, then check it in the browser.
 6. **Docs:** add it to [game-content.md](game-content.md), both the map table and the links between maps.
 
 ## Add an NPC or a script

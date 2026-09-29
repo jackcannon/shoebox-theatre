@@ -2,7 +2,7 @@
 
 ## Unit tests
 
-`npm test` runs `vitest run` using the `test` block in `vite.config.ts`: `environment: 'node'` and `include: ['src/**/*.test.ts']`. Test files sit next to the code they test. There is no DOM, WebGL or React renderer in tests, so only pure logic and data can be tested: `world/`, `scripting/`, the character part grids and map definitions. Importing `gameConfig` works in node even though it pulls in the whole engine index (React, three.js and CSS), because nothing renders at import time.
+`yarn test` runs `vitest run` using the `test` block in `vite.config.ts`: `environment: 'node'` and `include: ['src/**/*.test.ts']`. Test files sit next to the code they test. There is no DOM, WebGL or React renderer in tests, so only pure logic and data can be tested: `world/`, `scripting/`, the character part grids and map definitions. Importing `gameConfig` works in node even though it pulls in the whole engine index (React, three.js and CSS), because nothing renders at import time.
 
 There are 7 files and 50 tests:
 
@@ -25,15 +25,15 @@ Known test-output noise: vitest prints a `THREE_CJS_DEPRECATED` warning. It is h
 Run all three before handing work back or committing:
 
 ```bash
-npm test && npm run build && npm run lint
+yarn test && yarn build && yarn lint
 ```
 
-- `npm run build` runs `tsc -b`, so it is also the type check. The bundle-size advisory is expected.
-- `npm run lint` must report 0 errors. There are currently 24 known warnings ([known-issues.md](known-issues.md)). Don't add new ones.
+- `yarn build` runs `tsc -b`, so it is also the type check. The bundle-size advisory is expected.
+- `yarn lint` must report 0 errors. There are currently 24 known warnings ([known-issues.md](known-issues.md)). Don't add new ones.
 
 ## Running the game
 
-`npm run dev` serves http://localhost:5173. Check in the browser any change that affects rendering, the look, input, the UI, scripting flow or map layout; unit tests can't see those.
+`yarn dev` serves http://localhost:5173. Check in the browser any change that affects rendering, the look, input, the UI, scripting flow or map layout; unit tests can't see those.
 
 ### Debug handle
 

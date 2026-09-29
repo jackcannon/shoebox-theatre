@@ -72,12 +72,12 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 
 ## 6. Verification before you say "done"
 
-- **Always run** `npm test && npm run build && npm run lint`. `build` includes `tsc -b`, so it is the type check.
+- **Always run** `yarn test && yarn build && yarn lint`. `build` includes `tsc -b`, so it is the type check.
   - All tests must pass, and the build must exit 0.
   - Lint must show 0 errors and no new warnings. The current count is in [docs/known-issues.md](docs/known-issues.md); update it if it changes.
 - **Tests:** add or update unit tests for any change to pure logic (world, collision, scripting, map data), then update the counts in [docs/testing.md](docs/testing.md).
 - **Anything visual or interactive**, such as rendering, look, input, UI, scripts or map layout, needs a browser check. Follow [docs/testing.md](docs/testing.md):
-  - Run `npm run dev`.
+  - Run `yarn dev`.
   - Drive the game with `KeyboardEvent`s and read state through `window.__shoebox`.
   - Take screenshots, and compare before and after from a fixed player position when changing the look.
 - **Clean up.** The game renders every frame and pins the CPU and GPU:
@@ -89,8 +89,9 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 ## 7. Commands and environment
 
 - On this machine, prefix the first node-based command in a session with `source ~/.nvm/nvm.sh &&`, so nvm is loaded. Node must be `^20.19.0 || >=22.12.0`.
-- Use the npm scripts for project tasks: `npm run dev`, `npm test`, `npm run build`, `npm run lint`. Use `bun` to run one-off `.ts` or `.js` scripts.
-- The package manager is npm (`package-lock.json`). Don't add, remove or upgrade dependencies without asking. If you do change them, update [docs/stack.md](docs/stack.md).
+- Use the yarn scripts for project tasks: `yarn dev`, `yarn test`, `yarn build`, `yarn lint`. Use `bun` to run one-off `.ts` or `.js` scripts.
+- The package manager is yarn 1 (`yarn.lock`). Don't add, remove or upgrade dependencies without asking. If you do change them, update [docs/stack.md](docs/stack.md) and commit `yarn.lock`.
+- Never run `npm install` or `npm ci`. They create a `package-lock.json` and rewrite `yarn.lock`.
 - The dev server uses port 5173. Check it isn't already running (`lsof -nP -iTCP:5173 -sTCP:LISTEN`) before you start one. Reuse the one that's running, and don't kill a server you didn't start without a reason.
 - Put scratch files in `.agent-tmp/` and durable notes, plans and summaries in `.agent-files/`. Both are git-ignored on this machine through `.git/info/exclude`. Never commit them, and never reference them from code or docs.
 

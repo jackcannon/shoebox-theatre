@@ -25,19 +25,19 @@ There is no router, CSS framework, state library other than zustand, or R3F help
 | `oxlint` | 1 | Linting |
 | `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | — | Types |
 
-Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The scripts and docs use npm with `package-lock.json`. A stray `yarn.lock` also exists; see [known-issues.md](known-issues.md).
+Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package manager is yarn 1 (classic) with `yarn.lock`. There is no `package-lock.json`.
 
 ## Scripts
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Vite dev server on http://localhost:5173. Exposes `window.__shoebox` (see [testing.md](testing.md)) |
-| `npm test` | `vitest run`: all `src/**/*.test.ts` files once, in node |
-| `npm run build` | `tsc -b && vite build`: type-checks both tsconfig projects, then bundles into `dist/` |
-| `npm run lint` | `oxlint` over the repo |
-| `npm run preview` | Serves `dist/` |
+| `yarn dev` | Vite dev server on http://localhost:5173. Exposes `window.__shoebox` (see [testing.md](testing.md)) |
+| `yarn test` | `vitest run`: all `src/**/*.test.ts` files once, in node |
+| `yarn build` | `tsc -b && vite build`: type-checks both tsconfig projects, then bundles into `dist/` |
+| `yarn lint` | `oxlint` over the repo |
+| `yarn preview` | Serves `dist/` |
 
-`npm run build` prints a Vite advisory that the single JS chunk is over 500 kB (about 1.31 MB, 363 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
+`yarn build` prints a Vite advisory that the single JS chunk is over 500 kB (about 1.31 MB, 363 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
 
 ## Config files
 

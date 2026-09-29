@@ -13,15 +13,15 @@ For contributors, [`docs/`](docs/README.md) is the full reference for the stack,
 Requires Node 20.19+ or 22.12+ (Vite 8).
 
 ```bash
-npm install
-npm run dev       # http://localhost:5173
-npm test          # vitest unit tests
-npm run build     # type-check (tsc -b) and production build into dist/
-npm run lint      # oxlint
-npm run preview   # serve the production build
+yarn install
+yarn dev       # http://localhost:5173
+yarn test      # vitest unit tests
+yarn build     # type-check (tsc -b) and production build into dist/
+yarn lint      # oxlint
+yarn preview   # serve the production build
 ```
 
-`npm run build` prints a Vite advisory that the single JS chunk is larger than 500 kB. Most of it is three.js and postprocessing; the build still succeeds.
+`yarn build` prints a Vite advisory that the single JS chunk is larger than 500 kB. Most of it is three.js and postprocessing; the build still succeeds.
 
 ### Controls
 
@@ -184,7 +184,7 @@ export const gameConfig: GameConfig = {
 }
 ```
 
-`src/game/maps/maps.test.ts` checks every map in `gameConfig`, including new ones. It checks that rows have equal widths, that warps start on walkable tiles and land on walkable tiles of existing maps, and that NPCs stand on walkable tiles. Run `npm test` after adding a map.
+`src/game/maps/maps.test.ts` checks every map in `gameConfig`, including new ones. It checks that rows have equal widths, that warps start on walkable tiles and land on walkable tiles of existing maps, and that NPCs stand on walkable tiles. Run `yarn test` after adding a map.
 
 ### Add a map
 
@@ -470,9 +470,9 @@ camera: { fov: 28, pitch: 35, distance: 20 },
 
 ## Testing and debugging
 
-`npm test` runs vitest in a node environment on `src/**/*.test.ts`. There are 50 tests in 7 files, covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, and the integrity of every map.
+`yarn test` runs vitest in a node environment on `src/**/*.test.ts`. There are 50 tests in 7 files, covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, and the integrity of every map.
 
-In `npm run dev`, the runtime is exposed as `window.__shoebox` for the browser console. For example:
+In `yarn dev`, the runtime is exposed as `window.__shoebox` for the browser console. For example:
 
 ```js
 __shoebox.world.player              // position, facing, tile
