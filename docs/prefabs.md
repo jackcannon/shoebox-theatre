@@ -50,7 +50,7 @@ interface PrefabProps { object: MapObject; w: number; d: number }
 | `bed` | `Bed` | `color` (`#4f7fc0`) | Frame, mattress, pillow at the north end and a quilt blanket. Use `d: 2`. |
 | `plant` | `Plant` | — | Terracotta pot with leafy icosahedron blobs |
 | `rug` | `Rug` | `color` (`#3f6fa8`) | Flat, receive-only plane covering `w × d` |
-| `stairs` | `Stairs` | — | Five steps rising towards the back wall, plus a rail. Keep the tile walkable, since it holds the warp. |
+| `stairs` | `Stairs` | `down` (false) | Five steps and a rail. By default the steps rise towards the back wall. `down` reverses them so they descend towards the back wall. Keep the tile walkable, since it holds the warp. |
 | `desk` | `Desk` | — | Desk with a PC monitor (emissive `drawScreen('pc')`) and a keyboard |
 | `machine` | `Machine` | `seed` (from position) | Tall grey box with a painted panel and a pulsing emissive map |
 | `pedestal` | `Pedestal` | — | Round table with three emissive crystals (cyan, pink, gold) that bob and spin |

@@ -268,7 +268,7 @@ Register it in `maps` and link it from another map. For example, replace the tow
 More map options:
 
 - `TILES` has `grass`, `path`, `sand`, `tallGrass`, `flowers`, `tree`, `bush`, `fence`, `water`, `dock`, `woodFloor`, `tileFloor` and `wall`.
-- For interiors, make row 0 a wall (`{ ...TILES.wall, side: 'wallpaper' }`) and leave out the front wall. Put a doormat on the bottom row with a warp using `dir: 'down'`, and use a steeper, closer camera such as the demo's `{ fov: 32, pitch: 50, distance: 15 }`. The camera clamp automatically keeps tall back walls in view.
+- For interiors, make row 0 a wall (`{ ...TILES.wall, side: 'wallpaper' }`) and leave out the front wall. Put a doormat on the bottom row with a warp using `dir: 'down'`, and use a closer camera such as the demo's `{ fov: 32, pitch: 40, distance: 15 }`. The camera clamp automatically keeps tall back walls in view.
 - `showBanner: false` hides the location banner. The banner also stays hidden when the new map has the same `name` as the old one.
 
 #### Built-in prefabs
@@ -280,7 +280,8 @@ More map options:
 | `mailbox`, `bed`, `rug`, `doormat` | `color` |
 | `table` | `vase` |
 | `bookshelf`, `machine` | `seed` (varies the painted detail) |
-| `counter`, `tv`, `plant`, `stairs`, `desk`, `pedestal` | none |
+| `counter`, `tv`, `plant`, `desk`, `pedestal` | none |
+| `stairs` | `down` (false; when true, steps descend toward the back wall) |
 | `window`, `painting` | none. Place them on a row-0 wall tile with `solid: false`; they drop themselves to floor height. |
 
 A building's door warp goes on the tile just south of the footprint, at column `x + door` and row `y + d`, with `dir: 'up'`. Mark rugs, doormats and stairs `solid: false` so they can be walked on.

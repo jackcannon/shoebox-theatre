@@ -18,4 +18,4 @@ export const indoorWarm: EnvironmentSettings = {
   postfx: { tiltShift: 0.07 },
 }
 
-export const interiorCamera: CameraSettings = { fov: 32, pitch: 50, distance: 15 }
+export const interiorCamera: CameraSettings = { fov: 32, pitch: 40, distance: 15 }

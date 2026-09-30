@@ -239,34 +239,36 @@ export function Rug({ object, w, d }: PrefabProps) {
   )
 }
 
-export function Stairs({ w, d }: PrefabProps) {
+export function Stairs({ object, w, d }: PrefabProps) {
+  const down = prop(object, 'down', false)
   const steps = 5
   const riser = 0.3
   const run = d / steps
   const railX = w - 0.06
-  const frontZ = d - run / 2
-  const backZ = run / 2
+  const lowZ = down ? run / 2 : d - run / 2
+  const highZ = down ? d - run / 2 : run / 2
   const railRise = (steps - 1) * riser
-  const railLength = Math.hypot(railRise, frontZ - backZ)
+  const railLength = Math.hypot(railRise, highZ - lowZ)
   return (
     <>
       {Array.from({ length: steps }, (_, i) => {
         const h = (i + 1) * riser
+        const along = (i + 0.5) * run
         return (
           <Box
             key={i}
             size={[w - 0.2, h, run]}
-            position={[w / 2 - 0.04, h / 2, d - (i + 0.5) * run]}
+            position={[w / 2 - 0.04, h / 2, down ? along : d - along]}
             color={i % 2 ? WOOD : shade(WOOD, 0.08)}
           />
         )
       })}
-      <Box size={[0.06, riser + 0.7, 0.06]} position={[railX, (riser + 0.7) / 2, frontZ]} color={DARK_WOOD} />
-      <Box size={[0.06, steps * riser + 0.7, 0.06]} position={[railX, (steps * riser + 0.7) / 2, backZ]} color={DARK_WOOD} />
+      <Box size={[0.06, riser + 0.7, 0.06]} position={[railX, (riser + 0.7) / 2, lowZ]} color={DARK_WOOD} />
+      <Box size={[0.06, steps * riser + 0.7, 0.06]} position={[railX, (steps * riser + 0.7) / 2, highZ]} color={DARK_WOOD} />
       <Box
         size={[0.05, 0.05, railLength]}
-        position={[railX, riser + 0.7 + railRise / 2, (frontZ + backZ) / 2]}
-        rotation={[Math.atan2(railRise, frontZ - backZ), 0, 0]}
+        position={[railX, riser + 0.7 + railRise / 2, (lowZ + highZ) / 2]}
+        rotation={[Math.atan2(railRise, lowZ - highZ), 0, 0]}
         color={DARK_WOOD}
       />
     </>

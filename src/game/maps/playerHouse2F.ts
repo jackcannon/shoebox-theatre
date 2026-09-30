@@ -37,7 +37,7 @@ export const playerHouse2F: MapDefinition = {
     { type: 'desk', x: 3, y: 1, w: 2, text: "Your computer. A note on the screen says: 'Remember to save often!'" },
     { type: 'tv', x: 5, y: 1, text: 'A game console is hooked up to the TV. You played until very late last night…' },
     { type: 'bookshelf', x: 6, y: 1, text: "Adventure novels. You've read every one of them twice." },
-    { type: 'stairs', x: 8, y: 1, solid: false },
+    { type: 'stairs', x: 8, y: 1, solid: false, props: { down: true } },
     { type: 'rug', x: 3, y: 3, w: 3, d: 2, solid: false, props: { color: '#4f8f45' } },
     { type: 'plant', x: 8, y: 6 },
   ],

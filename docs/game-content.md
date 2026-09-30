@@ -47,7 +47,7 @@ Every character sheet is rendered from a `CharacterModel` when the game loads ([
   - `postfx: { tiltShift: 0.07 }`
 
   Each interior adds its own warm point lights at y ≈ 2.2 (intensity 10, distance 9). The lab uses cool white `#e8f0ff` lights at y 2.3 and overrides the ambient to `#f0f4ff` at 0.4.
-- **Cameras:** the town uses the default camera (fov 30, pitch 40, distance 18) with `border: 6`. The interiors use `interiorCamera = { fov: 32, pitch: 50, distance: 15 }` with no border.
+- **Cameras:** the town uses the default camera (fov 30, pitch 40, distance 18) with `border: 6`. The interiors use `interiorCamera = { fov: 32, pitch: 40, distance: 15 }` with no border. The pitch matches the town; interiors stay a little closer.
 
 ## Maps
 
@@ -55,7 +55,7 @@ Every character sheet is rendered from a `CharacterModel` when the game loads ([
 |---|---|---|---|---|
 | `town` | Mossvale Village | 24 × 22 | `T` tree, `,` grass, `.` path, `"` tall grass, `f` flowers, `=` fence, `b` bush, `s` sand, `~` water, `d` dock | 3 buildings, 3 signs, a mailbox, 4 lamps, 4 NPCs, 3 door warps, 1 trigger |
 | `playerHouse1F` | Your House | 11 × 8 | `W` wall (`wallpaper`), `.` wood floor | Bookshelf, TV, window, counter, painting, stairs, rug, table with vase, 2 plants, doormat, Mom |
-| `playerHouse2F` | Your Room | 10 × 7 | `W` wall (`wallpaper`), `.` wood floor | Bed (nap script), window, desk, TV, bookshelf, stairs, rug, plant |
+| `playerHouse2F` | Your Room | 10 × 7 | `W` wall (`wallpaper`), `.` wood floor | Bed (nap script), window, desk, TV, bookshelf, stairs (`down: true`), rug, plant |
 | `neighbourHouse` | Birch House | 11 × 8 | `W` wall (`wallpaperBlue`), `.` wood floor | Bookshelf, window, painting, counter, rug, table, 2 plants, doormat, Ivy |
 | `lab` | Hawthorne Lab | 15 × 12 | `W` wall (`labWall`), `.` tile floor | 4 bookshelves, window, 3 plants, 3 machines, crystal pedestal, 2 desks, doormat, the professor and two aides |
 
@@ -79,7 +79,7 @@ Every interior has a wall on row 0, walls down both sides and no front wall. Its
   - Pip, `kid` at `(19,9)`, wanders with radius 3
   - Wade, `fisher` at `(12,20)` on the dock, idle and facing down
 - **North exit trigger:** `x 9, y 1, w 6`. It says two lines about tall grass and walks the player one tile back down.
-- **South edge:** sand, then sea, with a 2×2-tile dock (columns 11–12, rows 19–20) running out from the central path. The forest and sea continue into the 6-tile border.
+- **South edge:** sand, then sea, with a 2×2-tile dock (columns 11–12, rows 19–20) running out from the central path. Sand tiles set `side: 'sand'` so the drop to the water is sand rather than the grassy `bank` lip. The forest and sea continue into the 6-tile border.
 
 ## Links between maps
 
@@ -94,7 +94,7 @@ Every interior has a wall on row 0, walls down both sides and no front wall. Its
 | `neighbourHouse` | (5,7) | down | `town` | (17,7) | down |
 | `lab` | (7,11) | down | `town` | (16,15) | down |
 
-Stairs arrivals are one tile south of the other floor's stairs tile, so arriving doesn't immediately warp back.
+Stairs arrivals are one tile south of the other floor's stairs tile, so arriving doesn't immediately warp back. The upstairs stairs set `props: { down: true }`, so they descend toward the back wall. The ground-floor stairs keep the default and rise toward the back wall.
 
 ## Scripts and flags
 
