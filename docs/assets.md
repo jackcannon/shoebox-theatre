@@ -1,6 +1,6 @@
 # Assets: textures, pixel art and character sprites
 
-All art is generated in code at load time. The only static asset is `public/favicon.svg`. The pipeline also accepts image URLs, so real art can replace or join the generated art without engine changes.
+All art is generated in code at load time, and the only static asset is `public/favicon.svg`. The pipeline accepts image URLs, so real art can replace or join the generated art without engine changes. External assets go in `public/`, with their source and licence recorded here.
 
 ## `AssetManager` (`assets/AssetManager.ts`)
 
@@ -18,7 +18,7 @@ interface TextureOptions { pixelArt?: boolean; mipmaps?: boolean }
 | `preload(onProgress?)` | Loads every registered URL and paints every `draw` source that isn't cached yet, reporting progress from 0 to 1 |
 | `texture(id)` | Returns the cached texture. It paints a `draw` source on first use. It throws for an unknown id, or for a URL source that wasn't preloaded. |
 | `generated(key, draw, options?)` | Caches parametric art under `generated:<key>`. Only the first `draw` for a key is kept, so **the key must encode every parameter `draw` uses**. |
-| `spriteSheet(id)` | Returns `{ texture, frameWidth, frameHeight, columns, rows }`, with columns and rows derived from the image size |
+| `spriteSheet(id)` | Returns `{ texture, frameWidth, frameHeight, pixelsPerUnit, columns, rows }`, with `pixelsPerUnit` defaulting to `PIXELS_PER_UNIT` and columns and rows derived from the image size |
 | `dispose()` | Disposes every cached texture |
 
 `configure()` applies these settings to every texture:
@@ -58,12 +58,18 @@ Prefab-specific art (facades, roofs, bricks, bookshelves, screens and so on) isn
 
 ## Character sprite sheets
 
-`SpriteSheetDefinition` is `{ texture: TextureSource, frameWidth, frameHeight }`. **Layout** (`SPRITE_ROWS`):
+`SpriteSheetDefinition` is `{ texture: TextureSource, frameWidth, frameHeight, pixelsPerUnit? }`. `pixelsPerUnit` is sheet pixels per world unit and defaults to `PIXELS_PER_UNIT` (16). **Layout** (`SPRITE_ROWS`):
 
 - 3 columns: stand, step A, step B
 - 4 rows: down (0), left (1), right (2), up (3)
+- optionally 4 more: down-left (4), down-right (5), up-left (6), up-right (7)
 
-The walk cycle plays stand, A, stand, B ([world.md](world.md#character)).
+A sheet with all 8 rows shows the character's 8-way `heading`; a 4-row sheet shows its 4-way `facing` ([world.md](world.md#character)). The walk cycle plays stand, A, stand, B.
+
+The engine can generate sheets in two ways:
+
+- `characterModelSheet(model)` renders an 8-row, 24×32, 21 px-per-tile sheet from a 3D character model. The demo uses it for every character. See [character-models.md](character-models.md).
+- `generatedCharacter(look)`, described below, paints a 4-row, 16×24 sheet at 16 px per tile from pixel-grid parts.
 
 ### `generatedCharacter(look)` (`assets/characterSprites.ts`)
 
@@ -100,7 +106,7 @@ interface CharacterLook {
 
 ### Using a PNG instead
 
-Draw frames in the same 3 × 4 layout at 16 px per tile, then register the sheet in `config.characters`:
+Draw frames in the same 3 × 4 (or 3 × 8) layout, then register the sheet in `config.characters`:
 
 ```ts
 characters: {
@@ -108,4 +114,4 @@ characters: {
 }
 ```
 
-Files in `public/` are served from `/`. URL sources are preloaded at start. A sprite's width in the world is `frameWidth / 16`.
+Files in `public/` are served from `/`. URL sources are preloaded at start. A sprite's width in the world is `frameWidth / pixelsPerUnit`. Sheets drawn at a density other than 16 px per tile set `pixelsPerUnit`, and their pixels then don't line up with the world's pixel grid.

@@ -2,17 +2,18 @@
 
 ## Unit tests
 
-`yarn test` runs `vitest run` using the `test` block in `vite.config.ts`: `environment: 'node'` and `include: ['src/**/*.test.ts']`. Test files sit next to the code they test. There is no DOM, WebGL or React renderer in tests, so only pure logic and data can be tested: `world/`, `scripting/`, the character part grids and map definitions. Importing `gameConfig` works in node even though it pulls in the whole engine index (React, three.js and CSS), because nothing renders at import time.
+`yarn test` runs `vitest run` using the `test` block in `vite.config.ts`: `environment: 'node'` and `include: ['src/**/*.test.ts']`. Test files sit next to the code they test. There is no DOM, WebGL or React renderer in tests, so only pure logic and data can be tested: `world/`, `scripting/`, the character part grids, the character model renderer and map definitions. Importing `gameConfig` works in node even though it pulls in the whole engine index (React, three.js and CSS), because nothing renders at import time.
 
-There are 7 files and 50 tests:
+There are 8 files and 55 tests:
 
 | File | Tests | Covers |
 |---|---|---|
 | `src/engine/world/collision.test.ts` | 7 | `moveBox`: contact at `tile − r` and `tile + 1 + r`, sliding on the free axis, blocking by dynamic boxes, ignoring boxes off to the side, moving out of an overlapping tile or box |
 | `src/engine/world/TileMap.test.ts` | 5 | Parsing and dimensions, errors for uneven rows and unknown characters, `getClamped` edge extension, out-of-bounds counts as solid |
-| `src/engine/world/World.test.ts` | 8 | Player stops at solid tiles, object footprints and NPCs; the corner nudge into a 1-tile gap; `findInteraction` for NPCs and objects with text; `facingFromInput` on diagonals |
+| `src/engine/world/World.test.ts` | 10 | Player stops at solid tiles, object footprints and NPCs; 8-way `heading` on diagonal input with 4-way facing, and the heading snapping back to a changed facing; the corner nudge into a 1-tile gap; `findInteraction` for NPCs and objects with text; `facingFromInput` on diagonals |
 | `src/engine/scripting/DialogueController.test.ts` | 4 | Typewriter reveal and confirm-to-complete, page resolution and close, choice cursor with confirm, cancel picks the last option. Uses a fake `Input` that only has `wasPressed`. |
 | `src/engine/assets/characterSprites.test.ts` | 4 | 16×24 frame; every head, body and leg row is 16 wide and fits in the frame |
+| `src/engine/sprites/renderSheet.test.ts` | 3 | `renderCharacterSheet`: a 72×256 sheet with no empty frame, left-facing rows that mirror the right-facing ones, identical output on a second render |
 | `src/game/maps/town.test.ts` | 1 | The town is 22 rows of exactly 24 tiles |
 | `src/game/maps/maps.test.ts` | 21 | For every map in `gameConfig`: registered under its own id, equal row widths, warp sources walkable, warp targets exist and land on walkable in-bounds tiles, NPCs on walkable tiles. Also checks the start tile is walkable. |
 

@@ -165,7 +165,10 @@ export class GameRuntime {
     await this.runScript(script, npc)
     npc.lookAt = null
     npc.paused = false
-    if (npc.behavior.type === 'idle') npc.facing = facing
+    if (npc.behavior.type === 'idle') {
+      npc.facing = facing
+      npc.heading = facing
+    }
   }
 
   private checkTileEvents(world: World, axis: { x: number; z: number }): void {
@@ -201,9 +204,11 @@ export class GameRuntime {
       character: c,
       face: (dir) => {
         c.facing = dir
+        c.heading = dir
       },
       faceToward: (other) => {
         c.facing = directionFromVector(other.character.x - c.x, other.character.z - c.z)
+        c.heading = c.facing
       },
       walk: (dir, tiles = 1) => world().walk(c, dir, tiles),
     })

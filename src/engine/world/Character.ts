@@ -1,4 +1,4 @@
-import type { Direction, NpcBehavior, NpcDefinition } from '../types'
+import type { Direction, Heading, NpcBehavior, NpcDefinition } from '../types'
 
 /** Frame columns used by the walk cycle: stand, step A, stand, step B. */
 const WALK_CYCLE = [0, 1, 0, 2]
@@ -22,6 +22,8 @@ export class Character {
   z: number
   y = 0
   facing: Direction
+  /** Direction the sprite shows on sheets with diagonal rows; always `facing` or a diagonal that includes it */
+  heading: Heading
   moving = false
   running = false
   /** Distance walked, drives the walk-cycle animation */
@@ -46,6 +48,7 @@ export class Character {
     this.x = options.tileX + 0.5
     this.z = options.tileZ + 0.5
     this.facing = options.facing ?? 'down'
+    this.heading = this.facing
     this.behavior = options.def?.behavior ?? { type: 'idle' }
     this.homeX = options.tileX
     this.homeZ = options.tileZ

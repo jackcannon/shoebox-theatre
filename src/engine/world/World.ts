@@ -1,4 +1,4 @@
-import { ALL_DIRECTIONS, DIRECTION_VECTORS, damp, directionFromVector } from '../math'
+import { ALL_DIRECTIONS, DIRECTION_VECTORS, damp, directionFromVector, headingFromVector, headingIncludes } from '../math'
 import type { Direction, MapDefinition, MapObject, PlayerSettings, TriggerDefinition, WarpDefinition, WarpTarget } from '../types'
 
 import { Character } from './Character'
@@ -126,6 +126,7 @@ export class World {
       } else if (!c.paused) this.updateAi(c, dt)
 
       if (!c.target && c.lookAt) c.facing = directionFromVector(c.lookAt.x - c.x, c.lookAt.z - c.z)
+      if (!headingIncludes(c.heading, c.facing)) c.heading = c.facing
       const moved = Math.hypot(c.x - prevX, c.z - prevZ)
       c.moving = moved > 1e-5
       c.stride += moved
@@ -150,6 +151,7 @@ export class World {
     if (len < 0.2) return
 
     p.facing = facingFromInput(control.x, control.z, p.facing)
+    p.heading = headingFromVector(control.x, control.z)
     const scale = Math.min(1, len) / len
     const speed = (control.run ? this.runSpeed : this.walkSpeed) * dt
     const dx = control.x * scale * speed
@@ -185,7 +187,10 @@ export class World {
     const dz = t.z - c.z
     const dist = Math.hypot(dx, dz)
     const step = t.speed * dt
-    if (dist > 1e-4) c.facing = directionFromVector(dx, dz)
+    if (dist > 1e-4) {
+      c.facing = directionFromVector(dx, dz)
+      c.heading = headingFromVector(dx, dz)
+    }
     if (step >= dist) {
       c.x = t.x
       c.z = t.z

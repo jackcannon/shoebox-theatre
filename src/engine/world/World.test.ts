@@ -46,6 +46,24 @@ describe('World player movement', () => {
     expect(world.player.x).toBeCloseTo(3.5 - 0.45 - world.player.radius)
   })
 
+  it('heads diagonally on diagonal input while facing stays 4-way', () => {
+    const world = createWorld({}, { x: 2, y: 2, facing: 'up' })
+    hold(world, 1, -1, 0.1)
+    expect(world.player.facing).toBe('up')
+    expect(world.player.heading).toBe('upRight')
+    hold(world, -1, 1, 0.1)
+    expect(world.player.facing).toBe('down')
+    expect(world.player.heading).toBe('downLeft')
+  })
+
+  it('snaps the heading back to a facing it no longer includes', () => {
+    const world = createWorld({}, { x: 2, y: 2, facing: 'up' })
+    hold(world, 1, -1, 0.1)
+    world.player.facing = 'left'
+    world.update(DT, null)
+    expect(world.player.heading).toBe('left')
+  })
+
   it('nudges the player sideways into a 1-tile gap', () => {
     const world = createWorld({ tiles: ['#.###', '#...#', '#...#', '#####'] }, { x: 1, y: 1 })
     world.player.x = 1.9

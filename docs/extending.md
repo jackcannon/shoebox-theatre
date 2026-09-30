@@ -21,8 +21,8 @@ First decide whether the change is **content** (`src/game`) or **engine** (`src/
 1. Add an `NpcDefinition` to the map's `npcs`. `id` must be unique on the map, `sprite` must be a `config.characters` key, and it must stand on a walkable tile.
 2. Use `dialogue` for plain text, or `interact: async (ctx) => { ... }` for logic ([scripting.md](scripting.md)). Store story state in `ctx.flags`.
 3. Pick a `behavior`: `idle`, `look` or `wander` with a `radius`.
-4. For a new look, add a `generatedCharacter` entry to `characters.ts` ([assets.md](assets.md#character-sprite-sheets)).
-5. **Docs:** [game-content.md](game-content.md) (characters, scripts and flags).
+4. For a new look, add a `CharacterModel` to `characterModels.ts`, following [game-art-style.md](game-art-style.md#rules-for-new-characters). `characters.ts` turns it into a sheet with `characterModelSheet` ([character-models.md](character-models.md)).
+5. **Docs:** [game-content.md](game-content.md) (characters, scripts and flags), and [game-art-style.md](game-art-style.md) for a new character.
 
 ## Add a tile type or surface
 

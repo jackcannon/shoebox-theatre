@@ -39,8 +39,8 @@ Almost every bug in this kind of engine comes down to an axis or an off-by-one. 
 
 ## Texel density: 16 px per unit
 
-- `PIXELS_PER_UNIT = 16` (`assets/pixel.ts`). Every texture is mapped at this density, so pixel art is the same size on terrain, props and characters.
+- `PIXELS_PER_UNIT = 16` (`assets/pixel.ts`). Every texture is mapped at this density, so pixel art is the same size on terrain, props and characters. Sprite sheets can override it with `pixelsPerUnit` (see below).
 - Terrain UVs are world position divided by `image size / 16`, so a 64×64 texture repeats every 4 tiles, and textures tile seamlessly across tile boundaries.
 - `Box` with `tiled` rescales box UVs the same way. Canvas-painted prefab faces are sized in pixels, for example `drawFacade({ width: ww * 16, ... })`, and rounded to whole pixels.
-- A sprite is `frameWidth / 16` units wide and `frameHeight / 16 × stretch` units tall. A 16×24 frame is 1 tile wide.
+- A sprite is `frameWidth / pixelsPerUnit` units wide and `frameHeight / pixelsPerUnit × stretch` units tall, where a sheet's `pixelsPerUnit` defaults to 16. A 16×24 frame is 1 tile wide. Sheets from `characterModelSheet` are the exception to the shared density: they are drawn at 21 px per unit, so their 24×32 frames are about 1.14 tiles wide and their pixels are finer than the world's ([character-models.md](character-models.md#sheet-format)).
 - The water shader snaps its pattern to the same 1/16 grid.

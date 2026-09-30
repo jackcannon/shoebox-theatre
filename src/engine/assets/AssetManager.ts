@@ -9,6 +9,8 @@ import {
   type Texture,
 } from 'three'
 
+import { PIXELS_PER_UNIT } from './pixel'
+
 export interface TextureOptions {
   /** Nearest-neighbour magnification (default true). Turn off for soft gradients. */
   pixelArt?: boolean
@@ -20,23 +22,36 @@ export interface TextureOptions {
 export type TextureSource = ({ url: string } | { draw: () => HTMLCanvasElement }) & TextureOptions
 
 /**
- * Character sheet layout: columns are frames (stand, step A, step B), rows are directions (down, left, right, up).
+ * Character sheet layout: columns are frames (stand, step A, step B), rows are directions (down, left, right, up),
+ * optionally followed by the diagonals (down-left, down-right, up-left, up-right).
  */
 export interface SpriteSheetDefinition {
   texture: TextureSource
   frameWidth: number
   frameHeight: number
+  /** Sheet pixels per world unit (default `PIXELS_PER_UNIT`, 16) */
+  pixelsPerUnit?: number
 }
 
 export interface SpriteSheet {
   texture: Texture
   frameWidth: number
   frameHeight: number
+  pixelsPerUnit: number
   columns: number
   rows: number
 }
 
-export const SPRITE_ROWS = { down: 0, left: 1, right: 2, up: 3 } as const
+export const SPRITE_ROWS = {
+  down: 0,
+  left: 1,
+  right: 2,
+  up: 3,
+  downLeft: 4,
+  downRight: 5,
+  upLeft: 6,
+  upRight: 7,
+} as const
 
 function configure(texture: Texture, options: TextureOptions): Texture {
   const pixelArt = options.pixelArt ?? true
@@ -120,6 +135,7 @@ export class AssetManager {
       texture,
       frameWidth: def.frameWidth,
       frameHeight: def.frameHeight,
+      pixelsPerUnit: def.pixelsPerUnit ?? PIXELS_PER_UNIT,
       columns: Math.round(image.width / def.frameWidth),
       rows: Math.round(image.height / def.frameHeight),
     }

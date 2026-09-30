@@ -1,4 +1,4 @@
-import type { Direction } from './types'
+import type { Direction, Heading } from './types'
 
 export const DIRECTION_VECTORS: Record<Direction, [number, number]> = {
   up: [0, -1],
@@ -25,6 +25,38 @@ export const ALL_DIRECTIONS: Direction[] = ['down', 'left', 'right', 'up']
 export function directionFromVector(dx: number, dz: number): Direction {
   if (Math.abs(dx) > Math.abs(dz)) return dx > 0 ? 'right' : 'left'
   return dz > 0 ? 'down' : 'up'
+}
+
+const HEADINGS: Heading[] = ['right', 'downRight', 'down', 'downLeft', 'left', 'upLeft', 'up', 'upRight']
+
+const HEADING_VECTORS: Record<Heading, [number, number]> = {
+  ...DIRECTION_VECTORS,
+  upLeft: [-1, -1],
+  upRight: [1, -1],
+  downLeft: [-1, 1],
+  downRight: [1, 1],
+}
+
+/**
+ * Picks the 8-way heading closest to a vector (x = east, z = south).
+ * @param dx - x component
+ * @param dz - z component
+ * @returns closest heading
+ */
+export function headingFromVector(dx: number, dz: number): Heading {
+  const sector = Math.round(Math.atan2(dz, dx) / (Math.PI / 4))
+  return HEADINGS[(sector + 8) % 8]
+}
+
+/**
+ * @param heading - 8-way heading
+ * @param direction - cardinal direction
+ * @returns whether the heading is the direction or a diagonal that includes it
+ */
+export function headingIncludes(heading: Heading, direction: Direction): boolean {
+  const [hx, hz] = HEADING_VECTORS[heading]
+  const [dx, dz] = DIRECTION_VECTORS[direction]
+  return (dx !== 0 && hx === dx) || (dz !== 0 && hz === dz)
 }
 
 export type Rng = () => number

@@ -12,7 +12,11 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 - **No persistence.** `Flags`, the current map and the player's position live only in memory. A reload restarts the game.
 - **No audio, menus, battles, touch input or day/night cycle.** See [extending.md](extending.md#not-built-yet).
 - **Collision is 2D.** Tile `height` is visual only. There are no jumps, ramps with collision or multi-level maps.
-- **Characters face 4 ways only**, although movement is 8-way.
+- **Gameplay facing is 4 ways only**, although movement is 8-way. Interaction, warps and scripts use the 4-way `facing`; only sprites on 8-row sheets show diagonals, from `heading`.
+- **Character pixels don't match the world's.** Sheets from `characterModelSheet` are drawn at 21 px per tile, so their pixels are about three-quarters the size of every other texture's.
+- **Character sheets render on the main thread.** Each `characterModelSheet` takes about 50–120 ms to sphere-trace, about 0.6 s for the demo's nine. `AssetManager.preload` calls every `draw` source synchronously in one pass, so the page doesn't respond and the loading progress doesn't move until they're all painted.
+- **Character models are left-right symmetric.** Left-facing rows are mirrored from right-facing ones, so asymmetric details swap sides when a character turns.
+- **`generatedCharacter` is unused by the demo.** The pixel-grid generator and its test remain in the engine's public API, but every Mossvale character uses `characterModelSheet`.
 - **NPC AI is local:** random turning and 1-tile steps, with no pathfinding or schedules. Scripted `walk` ignores collision.
 - **`once` triggers reset on every map load**, because `firedTriggers` lives on the `World`. Use a flag for once-per-game events.
 - **Point lights are costly.** Each `lamp` prefab and each `environment.lights` entry is a real point light, and none cast shadows.
@@ -22,7 +26,7 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 
 ## Build and lint
 
-- **Bundle size.** Vite warns that the single JS chunk is over 500 kB (about 1.31 MB, 363 kB gzipped). There is no code splitting yet.
+- **Bundle size.** Vite warns that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped). There is no code splitting yet.
 - **24 oxlint warnings, 0 errors.** Each was reviewed and none is a real bug; most flag normal R3F patterns:
   - `react(only-export-components)`: 6 in `render/decorations.tsx` and 3 in `prefabs/parts.tsx`. These files export helpers or non-component constants next to components, which only affects fast refresh.
   - `react(immutability)`: 1 each in `render/decorations.tsx` and `render/Water.tsx`, 3 in `render/Particles.tsx` and 2 in `render/FollowCamera.tsx`. These are deliberate per-frame mutation of three.js objects, uniforms and buffers inside `useFrame` or effects.

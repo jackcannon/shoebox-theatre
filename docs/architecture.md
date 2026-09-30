@@ -35,6 +35,11 @@ src/
       pixel.ts              PIXELS_PER_UNIT, PixelCanvas, colour helpers, noise, dithering
       builtinTextures.ts    BUILTIN_TEXTURES (terrain, foliage, light textures)
       characterSprites.ts   16x24 pixel-grid parts, generatedCharacter
+    sprites/                character sheets rendered from 3D models; no three.js or React
+      sdf.ts                signed-distance shapes, view basis, CPU sphere tracer
+      model.ts              CharacterModel, body, poses, hair styles, outfits, buildModel
+      renderSheet.ts        shading, line art, face, outline, 8-row sheet layout
+      characterModelSheet.ts  characterModelSheet: a draw-source SpriteSheetDefinition
     render/                 the R3F scene
       GameCanvas.tsx        <Canvas>, the GameLoop component, MapScene + PostEffects per map
       MapScene.tsx          background, fog, lighting, terrain, water, decorations, prefabs, sprites, particles, camera
@@ -51,11 +56,12 @@ src/
     ui/                     DOM overlay (GameUI and its parts, ui.css)
   game/
     config.ts               gameConfig
-    characters.ts           character looks
+    characterModels.ts      a CharacterModel per character
+    characters.ts           characterModelSheet for each model
     maps/                   town, playerHouse1F, playerHouse2F, neighbourHouse, lab, environments
 ```
 
-Each subsystem has its own doc: [world.md](world.md), [scripting.md](scripting.md), [rendering.md](rendering.md), [assets.md](assets.md), [prefabs.md](prefabs.md), [ui.md](ui.md), [game-content.md](game-content.md).
+Each subsystem has its own doc: [world.md](world.md), [scripting.md](scripting.md), [rendering.md](rendering.md), [assets.md](assets.md), [character-models.md](character-models.md), [prefabs.md](prefabs.md), [ui.md](ui.md). The demo game is described in [game-content.md](game-content.md) and [game-art-style.md](game-art-style.md).
 
 ## Dependency rules
 
@@ -63,6 +69,7 @@ These hold today. Keep them.
 
 - **`src/game` imports only from `src/engine` through its index** (`'../engine'` or `'../../engine'`). The one exception is `src/game/maps/maps.test.ts`, which imports `engine/world/World` to check map integrity.
 - **The engine never imports from `src/game`.** Everything game-specific arrives through `GameConfig`.
+- **`sprites/` imports no external libraries.** From the rest of the engine it imports only `assets/pixel.ts` and the `SpriteSheetDefinition` type, so the model renderer runs in node tests. The DOM is touched only inside the `draw` callback that `characterModelSheet` returns.
 - **`world/`, `scripting/`, `math.ts`, `core/Input.ts` and `render/camera.ts` import no external libraries.** They are plain TypeScript and run in node, which is why the world and scripting code is unit-tested there. Don't pull three.js or React into them. The only browser APIs used are in `Input`: the `Window` passed to `attach()` and the key events it delivers, and `navigator.getGamepads`, which is guarded with `typeof navigator`. Constructing an `Input` works in node.
 - `types.ts` imports only the `ComponentType` type from React, plus engine types.
 - `core/GameRuntime.ts` is the composition root. It is the only module that imports from every other folder.
@@ -169,6 +176,8 @@ Recipes are in [extending.md](extending.md).
 | `Shoebox` | component | `Shoebox.tsx` |
 | every type in `types.ts` | types | `export type *` |
 | `generatedCharacter`; `CharacterLook`, `CharacterPalette` | function; types | `assets/characterSprites.ts` |
+| `characterModelSheet` | function | `sprites/characterModelSheet.ts` |
+| `CharacterModel`, `CharacterModelPalette`, `HairStyle`, `Outfit` | types | `sprites/model.ts` |
 | `TextureSource`, `SpriteSheetDefinition` | types | `assets/AssetManager.ts` |
 | `PIXELS_PER_UNIT`, `PixelCanvas`, `shade`, `mixColor` | values | `assets/pixel.ts` |
 | `useRuntime` | hook | `core/context.ts` |
@@ -178,4 +187,4 @@ Recipes are in [extending.md](extending.md).
 | `ScriptContext`, `CharacterHandle` | types | `scripting/ScriptContext.ts` |
 | `TILES`, `DEFAULT_SURFACES` | values | `world/surfaces.ts` |
 
-Not exported (internal): `useUI`, `AssetManager` as a value, `World`, `Character`, `TileMap`, `DEFAULT_PREFABS`, `DEFAULT_DECORATIONS`, `BUILTIN_TEXTURES`, the noise and dither helpers, and the prefab texture painters. Game code that needs one of these should get it added to the index deliberately.
+Not exported (internal): `useUI`, `AssetManager` as a value, `World`, `Character`, `TileMap`, `DEFAULT_PREFABS`, `DEFAULT_DECORATIONS`, `BUILTIN_TEXTURES`, the noise and dither helpers, the prefab texture painters, and the model renderer's internals (`buildModel`, `renderCharacterSheet`, the SDF helpers). Game code that needs one of these should get it added to the index deliberately.

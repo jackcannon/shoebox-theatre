@@ -13,7 +13,7 @@ A browser game built with Vite, React 19, TypeScript, three.js and react-three-f
 | `zustand` | 5 | Vanilla store for UI-only state (`core/uiStore.ts`), read in React with `useStore` |
 | `@fontsource/pixelify-sans` | 5 | Pixel font for the overlay, weights 400 and 600, imported in `ui/GameUI.tsx` |
 
-There is no router, CSS framework, state library other than zustand, or R3F helper library (no drei). All art is generated in code, so there are no image, model or audio assets apart from `public/favicon.svg`.
+There is no router, CSS framework, state library other than zustand, or R3F helper library (no drei). All art is generated in code, so the only image asset is `public/favicon.svg`, and there are no model or audio assets.
 
 ## Dev dependencies
 
@@ -37,7 +37,7 @@ Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package ma
 | `yarn lint` | `oxlint` over the repo |
 | `yarn preview` | Serves `dist/` |
 
-`yarn build` prints a Vite advisory that the single JS chunk is over 500 kB (about 1.31 MB, 363 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
+`yarn build` prints a Vite advisory that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
 
 ## Config files
 
@@ -78,5 +78,5 @@ To deploy, push `master` to the Dokku remote: `git push <dokku-remote> master`.
 
 - **R3F for the scene, React DOM for the UI.** The 3D world is an R3F `<Canvas>`. Dialogue, choices, banners and the loading screen are ordinary DOM elements over it, which keeps text crisp and CSS-styled.
 - **Game state outside React.** A mutable `GameRuntime` class owns the game loop state, and R3F components read it inside `useFrame`. React re-renders only when a map changes or the UI store changes, never per frame. See [architecture.md](architecture.md).
-- **Procedural art.** Every texture, sprite sheet and prop is painted or built in code at load time ([assets.md](assets.md)). `AssetManager` also supports URL textures for real art.
+- **Procedural art.** Every texture, character sprite sheet and prop is painted or built in code at load time ([assets.md](assets.md), [character-models.md](character-models.md)). `AssetManager` also supports URL textures for real art.
 - **three r186 specifics.** `PCFSoftShadowMap` was removed in r186, so the canvas uses `shadows="percentage"`. The postprocessing `EffectComposer` forces `gl.toneMapping = NoToneMapping`, so tone mapping happens in the `<ToneMapping>` effect instead of the renderer.

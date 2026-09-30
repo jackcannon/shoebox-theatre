@@ -80,9 +80,10 @@ A `World` is one loaded map. `GameRuntime` builds a fresh one on every map load 
 
 ## `Character`
 
-State for the player and NPCs: `x`, `z`, `y`, `facing`, `moving`, `running`, `stride`, `target`, `behavior`, `homeX`/`homeZ`, `aiTimer`, `paused` and `lookAt`.
+State for the player and NPCs: `x`, `z`, `y`, `facing`, `heading`, `moving`, `running`, `stride`, `target`, `behavior`, `homeX`/`homeZ`, `aiTimer`, `paused` and `lookAt`.
 
 - The collision box half-size is `radius = 0.3`.
+- **`facing` vs `heading`:** `facing` is the 4-way `Direction` that gameplay uses (interaction, warps, scripts). `heading` is an 8-way `Heading` used only to pick the sprite row on sheets with diagonal rows. It is always `facing` or a diagonal that includes it: player input and walks towards a target set it from the movement vector (`headingFromVector`), and at the end of each character's update in `World.update` it snaps back to `facing` if it no longer includes it (`headingIncludes`). Script `face`/`faceToward` and an idle NPC turning back after a talk set both.
 - **Walk cycle:** sheet columns `[0, 1, 0, 2]` (stand, step A, stand, step B), advancing one frame per 0.3 units walked. A character that isn't moving shows frame 0.
 - `moveTo(tileX, tileZ, speed)` walks in a straight line to the tile centre, **ignoring collision**, and returns a promise that resolves on arrival. Starting a new `moveTo` resolves the previous one immediately.
 
@@ -93,12 +94,13 @@ Each frame, `World.update` does this for each character:
 - It follows its `target` if it has one (a scripted walk or an AI step).
 - Otherwise the player moves by input and an NPC runs its AI, unless it is `paused`.
 - A character with a `lookAt` and no target turns towards it.
+- Its `heading` snaps to `facing` if it no longer includes it.
 - It updates `moving`, `stride` and the eased `y`.
 
 The player's movement:
 
 - **Free 8-direction movement** at `walkSpeed` (default 3.6 tiles/s) or `runSpeed` (default 6.2). Input below length 0.2 is ignored.
-- **Facing is 4-way** (`facingFromInput`). On a diagonal the current facing is kept if that direction is still pressed; otherwise the dominant axis wins.
+- **Facing is 4-way** (`facingFromInput`). On a diagonal the current facing is kept if that direction is still pressed; otherwise the dominant axis wins. The heading is the input direction rounded to 8 ways.
 - **`moveBox`** (`collision.ts`) sweeps x first, then z, against the tile grid and against dynamic boxes. A blocked axis stops exactly at contact, at `tile − r` or `tile + 1 + r`, while the other axis keeps moving, so the player slides along walls. A box that already overlaps a solid tile can always move out of it.
 - **Dynamic boxes:** every NPC blocks the player with a box of half-size 0.45 (`NPC_HALF_SIZE`), plus a second box on the tile it is walking into.
 - **Corner nudging:** when the player pushes along exactly one axis and is blocked, the world probes sideways offsets of ±0.05, ±0.10, … up to `NUDGE_RANGE` (0.42), so ±0.40 at most. If an offset would unblock the push and the path to it is clear, the player slides towards it by up to one frame's movement, so 1-tile gaps don't need pixel-perfect alignment.

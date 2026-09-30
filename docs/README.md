@@ -16,6 +16,10 @@ The docs describe the code as it is now. If a doc and the code disagree, the cod
 
 ## Index
 
+Engine docs describe what `src/engine` can do for any game. Game docs describe the Mossvale demo in `src/game`: its content and the choices it makes with the engine. Keep them apart. Don't put Mossvale names, maps or art decisions in an engine doc; link to the game doc instead.
+
+### Project and engine
+
 | Doc | Covers |
 |---|---|
 | [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output, Dokku deployment |
@@ -24,13 +28,20 @@ The docs describe the code as it is now. If a doc and the code disagree, the cod
 | [world.md](world.md) | `TileMap`, tile types and surfaces, `World`, `Character`, movement and collision, NPC AI, interaction, warps, triggers |
 | [scripting.md](scripting.md) | `Script`, `ScriptContext`, dialogue and choices, flags, how talking to an NPC works, scripting gotchas |
 | [rendering.md](rendering.md) | The R3F scene: canvas, terrain, water, decorations, sprites, lighting, particles, camera, post-processing, wind |
-| [assets.md](assets.md) | `AssetManager`, texture sources and options, built-in textures, `PixelCanvas`, the character sprite generator |
+| [assets.md](assets.md) | `AssetManager`, texture sources and options, built-in textures, `PixelCanvas`, the pixel-grid character generator |
+| [character-models.md](character-models.md) | `characterModelSheet`: 8-direction sprite sheets rendered from 3D character models, their options and the rendering pipeline |
 | [prefabs.md](prefabs.md) | The prefab contract, helpers, built-in prefabs and their props |
 | [ui.md](ui.md) | The DOM overlay: UI state, components, CSS and font |
-| [game-content.md](game-content.md) | The Mossvale demo: config, characters, maps, links between maps, scripts and flags |
 | [testing.md](testing.md) | Unit tests, what each file covers, the dev debug handle, driving the game in a browser |
 | [extending.md](extending.md) | Where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI, and what to update |
 | [known-issues.md](known-issues.md) | Current bugs, limitations, lint warnings and features that don't exist yet |
+
+### Mossvale demo game
+
+| Doc | Covers |
+|---|---|
+| [game-content.md](game-content.md) | Config, characters, maps, links between maps, scripts and flags |
+| [game-art-style.md](game-art-style.md) | The characters' visual style, the hero's design, and the rules for new characters |
 
 ## Which doc to update
 
@@ -48,8 +59,10 @@ Before every commit, match the files you changed against this table and update e
 | `src/engine/scripting/*` | scripting.md |
 | `src/engine/render/*` | rendering.md |
 | `src/engine/assets/*` | assets.md |
+| `src/engine/sprites/*` | character-models.md, and game-art-style.md if the look of rendered characters changes |
 | `src/engine/prefabs/*` | prefabs.md |
 | `src/engine/ui/*` | ui.md |
+| `src/game/characterModels.ts`, `src/game/characters.ts` | game-art-style.md, game-content.md (Characters) |
 | `src/game/*` | game-content.md |
 | any `*.test.ts` | testing.md (file list and test counts) |
 | a bug fixed or found, a limitation added or removed | known-issues.md |

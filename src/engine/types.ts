@@ -6,6 +6,9 @@ import type { TileMap } from './world/TileMap'
 
 export type Direction = 'up' | 'down' | 'left' | 'right'
 
+/** 8-way direction a character's sprite shows, for sheets with diagonal rows. */
+export type Heading = Direction | 'upLeft' | 'upRight' | 'downLeft' | 'downRight'
+
 /** Async-friendly cutscene / interaction logic. See `ScriptContext` for the available commands. */
 export type Script = (ctx: ScriptContext) => void | Promise<void>
 

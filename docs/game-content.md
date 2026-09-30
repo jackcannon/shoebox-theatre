@@ -7,7 +7,8 @@
 | File | Contents |
 |---|---|
 | `config.ts` | `gameConfig`: title "Mossvale — Shoebox Theatre Demo", start `{ map: 'town', x: 5, y: 8, facing: 'down' }`, player `{ sprite: 'hero' }`, the five maps and `characters`. It doesn't override textures, surfaces, decorations or prefabs. |
-| `characters.ts` | Nine `generatedCharacter` looks |
+| `characterModels.ts` | `characterModels`: the `CharacterModel` of every character ([game-art-style.md](game-art-style.md)) |
+| `characters.ts` | `characters`: a `characterModelSheet` for each entry in `characterModels` |
 | `maps/environments.ts` | Shared `outdoorDay` and `indoorWarm` environments, and `interiorCamera` |
 | `maps/town.ts` | `town` |
 | `maps/playerHouse1F.ts`, `maps/playerHouse2F.ts`, `maps/neighbourHouse.ts`, `maps/lab.ts` | The four interiors |
@@ -17,19 +18,19 @@
 
 ## Characters
 
-| Id | Head | Body | Used by |
+Every character sheet is rendered from a `CharacterModel` when the game loads ([character-models.md](character-models.md)). All of them have 24×32 frames at 21 px per tile, with 8 directions. Their look and palettes are described in [game-art-style.md](game-art-style.md).
+
+| Id | Hair | Outfit | Used by |
 |---|---|---|---|
-| `hero` | cap | tunic | Player |
+| `hero` | spiky, with cap | tunic | the player |
 | `mom` | bun | dress | Mom |
 | `florist` | long | dress | Poppy |
 | `elder` | short | tunic | Old Tomas |
-| `fisher` | cap | tunic | Wade |
+| `fisher` | short, with cap | tunic | Wade |
 | `kid` | short | tunic | Pip |
 | `professor` | short | coat | Prof. Hawthorne |
 | `aide` | short | coat | Aide Juniper, Aide Rook |
 | `sister` | long | dress | Ivy |
-
-Palettes are in `characters.ts`.
 
 ## Environments and cameras
 

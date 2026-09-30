@@ -7,6 +7,8 @@ export type { GameRuntime } from './core/GameRuntime'
 export { prop, propNumbers, useGenerated, Box } from './prefabs/parts'
 export { applyWind } from './render/wind'
 export type { ScriptContext, CharacterHandle } from './scripting/ScriptContext'
+export { characterModelSheet } from './sprites/characterModelSheet'
+export type { CharacterModel, CharacterModelPalette, HairStyle, Outfit } from './sprites/model'
 export { TILES, DEFAULT_SURFACES } from './world/surfaces'
 
 export { Shoebox } from './Shoebox'

@@ -44,8 +44,8 @@ Several scripts can run at once. For example, two triggers on the same tile both
 | Member | Behaviour |
 |---|---|
 | `character` | The underlying `Character` |
-| `face(dir)` | Sets its facing |
-| `faceToward(handle)` | Faces another character, choosing the closest cardinal direction |
+| `face(dir)` | Sets its facing and heading |
+| `faceToward(handle)` | Faces another character, choosing the closest cardinal direction for both facing and heading |
 | `walk(dir, tiles = 1)` | Walks in a straight line at 3.2 tiles/s, **ignoring collision**, and resolves on arrival |
 
 ## Dialogue controller

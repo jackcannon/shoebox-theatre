@@ -2,7 +2,7 @@
 
 A Shoebox Theatre engine in the style of Octopath Traveler and the Dragon Quest III remake: flat pixel-art characters standing in a lit, miniature 3D diorama. It runs in the browser on Vite, React 19, three.js and react-three-fiber.
 
-The sprites are upright planes that cast real shadows, and the camera looks down at a fixed angle. The Shoebox Theatre look comes from a tilt-shift blur that follows the player, bloom on lamps, windows and screens, ACES tone mapping and a vignette, plus foliage that sways in the wind, drifting light motes, animated water and light shafts through windows. All art is generated in code.
+The sprites are upright planes that cast real shadows, and the camera looks down at a fixed angle. The Shoebox Theatre look comes from a tilt-shift blur that follows the player, bloom on lamps, windows and screens, ACES tone mapping and a vignette, plus foliage that sways in the wind, drifting light motes, animated water and light shafts through windows. All art is generated in code, including the characters, which are rendered from small 3D models into 8-direction pixel-art sprite sheets as the game loads.
 
 The repo includes **Mossvale Village**, a small demo game with five maps: the village, your house (two floors), the neighbours' house and a research lab. You can walk around, enter buildings, read signs and talk to NPCs, and some conversations branch on choices and story flags.
 
@@ -51,7 +51,8 @@ src/
     Shoebox.tsx        creates the GameRuntime, the 3D canvas and the UI overlay
     types.ts            every public type (GameConfig, MapDefinition, TileType, MapObject, ...)
     math.ts             directions, seeded RNG, tile hash, damp, wait
-    assets/             AssetManager, PixelCanvas and colour helpers, built-in textures, character sheet generator
+    assets/             AssetManager, PixelCanvas and colour helpers, built-in textures, pixel-grid character generator
+    sprites/            character sprite sheets sphere-traced from 3D models (characterModelSheet)
     core/               GameRuntime, Input (keyboard + gamepad), the zustand UI store, React context hooks
     world/              TileMap, World (movement, NPC AI, interaction), Character, collision, surfaces and TILES, terrain geometry
     scripting/          ScriptContext, DialogueController (typewriter and choices), Flags
@@ -61,11 +62,12 @@ src/
     ui/                 DOM overlay: dialogue box, choice box, location banner, fade, loading screen, controls hint, ui.css
   game/
     config.ts           gameConfig: title, start position, player, maps, characters
-    characters.ts       character looks built with generatedCharacter
+    characterModels.ts  a CharacterModel for every character
+    characters.ts       a characterModelSheet for each model
     maps/               town, playerHouse1F, playerHouse2F, neighbourHouse, lab, shared environments
 ```
 
-The public API (`src/engine/index.ts`) exports `Shoebox`, `generatedCharacter`, `TILES`, `DEFAULT_SURFACES`, `PIXELS_PER_UNIT`, `PixelCanvas`, `shade`, `mixColor`, the prefab helpers `prop`, `propNumbers`, `useGenerated` and `Box`, plus `useRuntime` and `applyWind`. It also exports every type in `types.ts`, and the `CharacterLook`, `CharacterPalette`, `TextureSource`, `SpriteSheetDefinition`, `ScriptContext`, `CharacterHandle` and `GameRuntime` types.
+The public API (`src/engine/index.ts`) exports `Shoebox`, `characterModelSheet`, `generatedCharacter`, `TILES`, `DEFAULT_SURFACES`, `PIXELS_PER_UNIT`, `PixelCanvas`, `shade`, `mixColor`, the prefab helpers `prop`, `propNumbers`, `useGenerated` and `Box`, plus `useRuntime` and `applyWind`. It also exports every type in `types.ts`, and the `CharacterModel`, `CharacterModelPalette`, `HairStyle`, `Outfit`, `CharacterLook`, `CharacterPalette`, `TextureSource`, `SpriteSheetDefinition`, `ScriptContext`, `CharacterHandle` and `GameRuntime` types.
 
 ### One frame
 
@@ -88,7 +90,7 @@ Every frame runs in react-three-fiber `useFrame` callbacks, ordered by priority:
 
 ### Coordinates and scale
 
-- **16 pixels per world unit.** One tile is one world unit and `PIXELS_PER_UNIT = 16`. Every texture (terrain, props and sprites) is mapped at that density, so pixel art is the same size everywhere.
+- **16 pixels per world unit.** One tile is one world unit and `PIXELS_PER_UNIT = 16`. Every texture (terrain, props and sprites) is mapped at that density, so pixel art is the same size everywhere, except for sprite sheets that set their own `pixelsPerUnit`, such as the 21 px-per-tile character model sheets.
 - Tile `(x, z)` covers `x..x+1` by `z..z+1`. Map rows are listed north to south; north is −z, and the camera sits to the south (+z) looking north. Character positions are floats in tile units, and tile centres are at `+0.5`.
 - In map definitions, `y` always means the row, which is world z. That applies to objects, NPCs, warps, triggers and warp targets.
 - A `MapObject`'s `x`/`y` is the top-left (north-west) tile of its `w × d` footprint. A prefab renders in a group placed at that tile's corner at the footprint's ground height. It draws over local `[0..w] × [0..d]`, and its front (south) face is at local `z = d`.
@@ -109,21 +111,27 @@ Every frame runs in react-three-fiber `useFrame` callbacks, ordered by priority:
 
 ### Character sprite sheets
 
-A `SpriteSheetDefinition` is `{ texture, frameWidth, frameHeight }`. The sheet is a grid of **3 columns** (stand, step A, step B) by **4 rows** (down, left, right, up). The walk cycle plays stand, A, stand, B, advancing one frame every 0.3 tiles walked.
+A `SpriteSheetDefinition` is `{ texture, frameWidth, frameHeight, pixelsPerUnit? }`. The sheet is a grid of **3 columns** (stand, step A, step B) by **4 rows** (down, left, right, up), optionally followed by 4 diagonal rows (down-left, down-right, up-left, up-right). A sheet with all 8 rows shows diagonal poses while the character moves diagonally; gameplay facing stays 4-way either way. The walk cycle plays stand, A, stand, B, advancing one frame every 0.3 tiles walked.
 
-In the world, a sprite is an upright plane `frameWidth / 16` units wide. Its height is `frameHeight / 16` stretched by `1 / cos(pitch)`, which cancels the camera's foreshortening so the pixel art keeps its proportions on screen. It is alpha-tested, casts a real shadow, and has a soft blob shadow at its feet.
+In the world, a sprite is an upright plane `frameWidth / pixelsPerUnit` units wide, where `pixelsPerUnit` defaults to 16. Its height is `frameHeight / pixelsPerUnit` stretched by `1 / cos(pitch)`, which cancels the camera's foreshortening so the pixel art keeps its proportions on screen. It is alpha-tested, casts a real shadow, and has a soft blob shadow at its feet.
 
-There are two ways to make a character:
+There are three ways to make a character:
 
-- **Generated:** `generatedCharacter({ head, body, palette })` paints a 48×96 sheet of 16×24 frames from pixel-grid parts. The head is `short`, `cap`, `long` or `bun`, and the body is `tunic`, `dress` or `coat`. The palette sets `hair`, `skin`, `top`, `accent`, `bottom` and `shoes`, with optional `eyes` and `outline`. Shadow tones are derived automatically, and the left-facing row is mirrored from the right.
-- **A PNG:** lay frames out in the same 3×4 grid and register it by URL (see [Use a PNG](#use-a-png-texture-or-sprite-sheet)). Sprite sheets default to `mipmaps: false`. Keep 16 px per tile, so a 16×24 frame is one tile wide.
+- **From a 3D model:** `characterModelSheet({ hair, outfit, palette, scale? })` sphere-traces a small chibi model into a 72×256 sheet of 24×32 frames with all 8 directions, at 21 px per tile. It has black line art and two light bands per colour. The hair is `spiky`, `short`, `long` or `bun`, and the outfit is `tunic`, `dress` or `coat`. The palette sets `skin`, `hair`, `top` and `shoes`, with optional `bottom`, `undershirt` and `belt`, plus `cap`, `emblem`, `apron` and `tie`, which each add that part. Every Mossvale character is made this way. See [docs/character-models.md](docs/character-models.md).
+- **From pixel-grid parts:** `generatedCharacter({ head, body, palette })` paints a 48×96 sheet of 16×24 frames with 4 directions. The head is `short`, `cap`, `long` or `bun`, and the body is `tunic`, `dress` or `coat`. The palette sets `hair`, `skin`, `top`, `accent`, `bottom` and `shoes`, with optional `eyes` and `outline`. Shadow tones are derived automatically, and the left-facing row is mirrored from the right.
+- **A PNG:** lay frames out in the same 3×4 or 3×8 grid and register it by URL (see [Use a PNG](#use-a-png-texture-or-sprite-sheet)). Sprite sheets default to `mipmaps: false`. At the default 16 px per tile a 16×24 frame is one tile wide; set `pixelsPerUnit` for art drawn at another density.
 
 ```ts
 export const characters = {
-  hero: generatedCharacter({
+  mom: characterModelSheet({
+    hair: 'bun',
+    outfit: 'dress',
+    palette: { skin: '#f0c4a0', hair: '#8a4b2d', top: '#e58a7a', shoes: '#6b3f2a', apron: '#f4efe6' },
+  }),
+  guard: generatedCharacter({
     head: 'cap',
     body: 'tunic',
-    palette: { hair: '#3b2a24', skin: '#f2c9a0', top: '#3569b5', accent: '#d9493e', bottom: '#34406a', shoes: '#2d2d3a' },
+    palette: { hair: '#3a2a22', skin: '#e8bb94', top: '#5a6a8a', accent: '#c0a040', bottom: '#3a3a4a', shoes: '#2d2d3a' },
   }),
 }
 ```
@@ -138,7 +146,7 @@ export const characters = {
 
 ## Movement and collision
 
-- **Free 8-direction movement.** The player moves at `walkSpeed` (default 3.6 tiles/s) or `runSpeed` while running (default 6.2), both set in `PlayerSettings`. Diagonal input is normalised. Facing is 4-way: on a diagonal, the player keeps their current facing if that direction is still held.
+- **Free 8-direction movement.** The player moves at `walkSpeed` (default 3.6 tiles/s) or `runSpeed` while running (default 6.2), both set in `PlayerSettings`. Diagonal input is normalised. Facing is 4-way: on a diagonal, the player keeps their current facing if that direction is still held. The sprite follows a separate 8-way `heading`, so a sheet with diagonal rows shows diagonal poses.
 - **Box-vs-tile sweep.** The player is a square with half-size 0.3. `moveBox` in `world/collision.ts`, a pure and unit-tested function, sweeps the x axis and then the z axis against the tile grid and against dynamic boxes. A blocked axis stops exactly at contact while the other axis keeps moving, so the player slides along walls.
 - **What is solid:** terrain tiles with `solid: true`, anything out of bounds, and the footprint of every object without `solid: false`. Height is visual only. Characters ease to the ground height of their tile, so non-solid raised tiles act as steps.
 - **Corner nudging.** If you push along one axis and hit a corner, the world tries sideways offsets of up to 0.42 tiles. If one clears the way, the player slides towards the gap, so 1-tile gaps don't need pixel-perfect lining up.
@@ -431,11 +439,11 @@ textures: {
 surfaces: { cobble: { texture: 'cobble' } },
 characters: {
   ...characters,
-  hero: { texture: { url: '/sprites/hero.png' }, frameWidth: 16, frameHeight: 24 },
+  guard: { texture: { url: '/sprites/guard.png' }, frameWidth: 16, frameHeight: 24 },
 },
 ```
 
-The image size sets the world scale (16 px = 1 tile), for terrain and for `Box` with `tiled`. Add `pixelArt: false` for smooth, painted images.
+The image size sets the world scale (16 px = 1 tile), for terrain and for `Box` with `tiled`. Sprite sheets can override it with `pixelsPerUnit`. Add `pixelArt: false` for smooth, painted images.
 
 ### Tune the look
 
@@ -498,6 +506,6 @@ See [docs/stack.md](docs/stack.md#deployment) for how the buildpacks work.
 
 ## Credits
 
-- All art is generated procedurally in code: terrain, props, characters, water and light effects. The project uses no third-party game assets, and the village, characters and dialogue are original.
+- All art is original and generated procedurally in code: terrain, props, characters, water and light effects. The project uses no third-party game assets, and the village, characters and dialogue are original.
 - Font: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) (SIL Open Font License 1.1), via `@fontsource/pixelify-sans`.
 - Built with [three.js](https://threejs.org), [react-three-fiber](https://r3f.docs.pmnd.rs), [@react-three/postprocessing](https://github.com/pmndrs/react-postprocessing), [zustand](https://github.com/pmndrs/zustand) and [Vite](https://vite.dev).

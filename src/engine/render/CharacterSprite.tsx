@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { DoubleSide, type Group, type Mesh } from 'three'
 
 import { SPRITE_ROWS } from '../assets/AssetManager'
-import { PIXELS_PER_UNIT } from '../assets/pixel'
 import { useRuntime } from '../core/context'
 import type { Character } from '../world/Character'
 
@@ -18,8 +17,9 @@ export function CharacterSprite({ character, stretch }: { character: Character; 
   }, [sheet])
   useEffect(() => () => texture.dispose(), [texture])
 
-  const width = sheet.frameWidth / PIXELS_PER_UNIT
-  const height = (sheet.frameHeight / PIXELS_PER_UNIT) * stretch
+  const width = sheet.frameWidth / sheet.pixelsPerUnit
+  const height = (sheet.frameHeight / sheet.pixelsPerUnit) * stretch
+  const diagonals = sheet.rows > SPRITE_ROWS.upRight
   const group = useRef<Group>(null)
   const body = useRef<Mesh>(null)
 
@@ -27,9 +27,10 @@ export function CharacterSprite({ character, stretch }: { character: Character; 
     if (!group.current || !body.current) return
     group.current.position.set(character.x, character.y, character.z)
     const frame = character.frame()
-    const bob = character.moving && frame === 0 ? stretch / PIXELS_PER_UNIT : 0
+    const bob = character.moving && frame === 0 ? stretch / sheet.pixelsPerUnit : 0
     body.current.position.y = height / 2 + bob
-    texture.offset.set(frame / sheet.columns, 1 - (SPRITE_ROWS[character.facing] + 1) / sheet.rows)
+    const row = SPRITE_ROWS[diagonals ? character.heading : character.facing]
+    texture.offset.set(frame / sheet.columns, 1 - (row + 1) / sheet.rows)
   })
 
   return (

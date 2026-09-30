@@ -74,10 +74,10 @@ Every decoration is instanced: one `InstancedMesh` per geometry, with per-instan
 
 ## Character sprites (`CharacterSprite.tsx`)
 
-- Each sprite is a vertical `PlaneGeometry` that is `frameWidth / 16` wide and `frameHeight / 16 × stretch` tall, where stretch is `1 / cos(pitch)`.
+- Each sprite is a vertical `PlaneGeometry` that is `frameWidth / pixelsPerUnit` wide and `frameHeight / pixelsPerUnit × stretch` tall, where stretch is `1 / cos(pitch)` and `pixelsPerUnit` is the sheet's (default 16).
 - Its `MeshStandardMaterial` has `alphaTest: 0.5`, roughness 1 and **`DoubleSide`**. It must stay `DoubleSide`: a front-side material is drawn back-side in three's shadow pass, and a plane facing the camera, lit from the front, would then cast no shadow.
 - Each sprite **clones** the sheet texture so it has its own `offset` and `repeat`. Clones share the GPU upload of the source image. The clone is disposed on unmount.
-- Every frame it copies `x/y/z` from its `Character`, sets the UV offset to column `frame()` and the row for its facing, and bobs up one pixel on standing frames while moving.
+- Every frame it copies `x/y/z` from its `Character`, sets the UV offset to column `frame()` and the row for its `heading` (sheets with all 8 rows) or its `facing` (4-row sheets), and bobs up one sheet pixel on standing frames while moving.
 - A soft `blob` contact shadow sits under each sprite (`renderOrder` 2, `depthWrite: false`) in addition to the real shadow.
 
 ## Lighting (`Lighting.tsx`)
