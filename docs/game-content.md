@@ -6,7 +6,7 @@
 
 | File | Contents |
 |---|---|
-| `config.ts` | `gameConfig`: title "Mossvale — Shoebox Theatre Demo", start `{ map: 'town', x: 5, y: 8, facing: 'down' }`, player `{ sprite: 'hero' }`, the five maps and `characters`. It doesn't override textures, surfaces, decorations or prefabs. |
+| `config.ts` | `gameConfig`: title "Mossvale: a Shoebox Theatre demo", start `{ map: 'town', x: 5, y: 8, facing: 'down' }`, player `{ sprite: 'hero' }`, the five maps and `characters`. It doesn't override textures, surfaces, decorations or prefabs. |
 | `characterModels.ts` | `characterModels`: the `CharacterModel` of every character ([game-art-style.md](game-art-style.md)) |
 | `characters.ts` | `characters`: a `characterModelSheet` for each entry in `characterModels` |
 | `maps/environments.ts` | Shared `outdoorDay` and `indoorWarm` environments, and `interiorCamera` |

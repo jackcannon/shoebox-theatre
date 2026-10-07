@@ -31,7 +31,7 @@ Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package ma
 
 | Command | What it does |
 |---|---|
-| `yarn dev` | Vite dev server on http://localhost:5173. Exposes `window.__shoebox` (see [testing.md](testing.md)) |
+| `yarn dev` | Vite dev server on http://localhost:5173. The demo turns on `debug`, so the runtime is `window.__shoebox` (see [testing.md](testing.md)) |
 | `yarn test` | `vitest run`: all `src/**/*.test.ts` files once, in node |
 | `yarn build` | `tsc -b && vite build`: type-checks both tsconfig projects, then bundles into `dist/` |
 | `yarn lint` | `oxlint` over the repo |
@@ -51,7 +51,7 @@ Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package ma
 - **`tsconfig.node.json`** type-checks `vite.config.ts` only (node types, `module: nodenext`).
 - **`vite.config.ts`**: the React plugin plus a Vitest block, `test: { environment: 'node', include: ['src/**/*.test.ts'] }`, typed through `/// <reference types="vitest/config" />`.
 - **`.oxlintrc.json`**: the `react`, `typescript` and `oxc` plugins. `react/rules-of-hooks` is an error, and `react/only-export-components` is a warning with `allowConstantExport`.
-- **`index.html`**: title "Mossvale — Shoebox Theatre Demo", an inline `html,body,#root{margin:0;height:100%;background:#000}` style, and the `/src/main.tsx` module entry.
+- **`index.html`**: title "Mossvale: a Shoebox Theatre demo", an inline `html,body,#root{margin:0;height:100%;background:#000}` style, and the `/src/main.tsx` module entry.
 - **`.gitignore`**: the Vite scaffold defaults (`node_modules`, `dist`, `*.local`, logs, editor folders). The agent scratch folders `.agent-files/` and `.agent-tmp/` are excluded per machine (in `.git/info/exclude`), not by `.gitignore`.
 
 ## Deployment

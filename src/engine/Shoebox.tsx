@@ -8,17 +8,21 @@ import { GameUI } from './ui/GameUI'
 
 import './ui/ui.css'
 
-/** Mounts a game: creates the runtime, the 3D canvas and the UI overlay. */
-export function Shoebox({ config }: { config: GameConfig }) {
+/**
+ * Mounts a game: creates the runtime, the 3D canvas and the UI overlay.
+ * @param config - game definition; must be a stable, module-level constant
+ * @param debug - exposes the runtime as `window.__shoebox` for the browser console and automation
+ */
+export function Shoebox({ config, debug = false }: { config: GameConfig; debug?: boolean }) {
   const [runtime, setRuntime] = useState<GameRuntime | null>(null)
 
   useEffect(() => {
     const instance = new GameRuntime(config)
-    if (import.meta.env.DEV) (window as unknown as { __shoebox?: GameRuntime }).__shoebox = instance
+    if (debug) (window as unknown as { __shoebox?: GameRuntime }).__shoebox = instance
     setRuntime(instance)
     void instance.start()
     return () => instance.dispose()
-  }, [config])
+  }, [config, debug])
 
   if (!runtime) return null
   return (

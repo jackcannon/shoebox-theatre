@@ -8,7 +8,7 @@ import { Vector3 } from 'three'
 import type { World } from '../world/World'
 
 /**
- * The Shoebox Theatre look: bloom on bright pixels, a tilt-shift blur whose focus line follows the player,
+ * The engine's look: bloom on bright pixels, a tilt-shift blur whose focus line follows the player,
  * gentle grading and a vignette.
  */
 export function PostEffects({ world }: { world: World }) {

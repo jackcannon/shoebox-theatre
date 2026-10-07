@@ -8,10 +8,10 @@ The repo has two halves: a reusable engine (`src/engine`) and a demo game that i
 index.html                  mounts /src/main.tsx into #root
 src/
   main.tsx                  createRoot + <StrictMode><App /></StrictMode>
-  App.tsx                   <Shoebox config={gameConfig} />
+  App.tsx                   <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
   engine/
     index.ts                public API; game code imports only from here
-    Shoebox.tsx            creates the GameRuntime, renders <GameCanvas> and <GameUI>
+    Shoebox.tsx             creates the GameRuntime, renders <GameCanvas> and <GameUI>
     types.ts                every public data type (GameConfig, MapDefinition, TileType, MapObject, ...)
     math.ts                 directions, directionFromVector, seeded RNG, hashTile, damp, wait
     core/
@@ -105,7 +105,7 @@ Rule of thumb: if the DOM overlay needs it, put it in the UI store. If only the 
 
 ## Lifecycle
 
-1. **Mount.** `Shoebox` creates `new GameRuntime(config)` inside `useEffect`, stores it in state and calls `start()`. The cleanup calls `dispose()`. Creating it in the effect means React StrictMode's double mount gets a fresh runtime each time, because a disposed runtime can't restart. The effect depends on `config`, so `config` must be a stable module-level constant. In dev builds the instance is also assigned to `window.__shoebox`.
+1. **Mount.** `Shoebox` creates `new GameRuntime(config)` inside `useEffect`, stores it in state and calls `start()`. The cleanup calls `dispose()`. Creating it in the effect means React StrictMode's double mount gets a fresh runtime each time, because a disposed runtime can't restart. The effect depends on `config`, so `config` must be a stable module-level constant. When the `debug` prop is true, the instance is also assigned to `window.__shoebox`. The demo sets `debug` from `import.meta.env.DEV`, because a published engine must not read Vite's `import.meta.env` itself.
 2. **Construction.** The runtime merges registries: `surfaces = { ...DEFAULT_SURFACES, ...config.surfaces }`, and the same pattern for `decorations` (`DEFAULT_DECORATIONS`) and `prefabs` (`DEFAULT_PREFABS`). It registers `BUILTIN_TEXTURES` overlaid with `config.textures`, then one sprite sheet per `config.characters` entry. It also creates the `DialogueController`. A config entry with an existing id replaces the built-in.
 3. **`start()`:**
    1. attaches input to `window`
@@ -173,7 +173,7 @@ Recipes are in [extending.md](extending.md).
 
 | Export | Kind | From |
 |---|---|---|
-| `Shoebox` | component | `Shoebox.tsx` |
+| `Shoebox` | component; props `config: GameConfig`, `debug?: boolean` | `Shoebox.tsx` |
 | every type in `types.ts` | types | `export type *` |
 | `generatedCharacter`; `CharacterLook`, `CharacterPalette` | function; types | `assets/characterSprites.ts` |
 | `characterModelSheet` | function | `sprites/characterModelSheet.ts` |

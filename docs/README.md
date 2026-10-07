@@ -1,6 +1,6 @@
 # Project docs
 
-These docs explain how the project works: the stack, the architecture, every subsystem of the Shoebox Theatre engine in `src/engine`, and the Mossvale demo game in `src/game`. They are written for AI agents and developers who are about to change the code.
+These docs explain how the project works: the stack, the architecture, every subsystem of the engine in `src/engine`, and the Mossvale demo game in `src/game`. They are written for AI agents and developers who are about to change the code.
 
 - How an agent should **behave** in this repo (rules, workflow, style, the docs-update rule) is in [`../AGENTS.md`](../AGENTS.md).
 - The user-facing overview, quick start and tutorial-style snippets are in the root [`README.md`](../README.md).
@@ -50,6 +50,7 @@ Before every commit, match the files you changed against this table and update e
 | If you changed... | Check and update |
 |---|---|
 | `package.json`, `vite.config.ts`, `tsconfig*.json`, `.oxlintrc.json`, `index.html`, `public/` | stack.md, and testing.md for test config |
+| `tools/*` | stack.md |
 | `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
 | `src/main.tsx`, `src/App.tsx`, `src/engine/Shoebox.tsx`, `src/engine/index.ts`, `src/engine/types.ts`, `src/engine/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
 | `src/engine/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |

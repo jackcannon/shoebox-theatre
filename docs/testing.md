@@ -38,7 +38,7 @@ yarn test && yarn build && yarn lint
 
 ### Debug handle
 
-In dev builds only (`import.meta.env.DEV`), `Shoebox` sets `window.__shoebox` to the live `GameRuntime`:
+When its `debug` prop is true, `Shoebox` sets `window.__shoebox` to the live `GameRuntime`. The demo passes `debug={import.meta.env.DEV}` in `src/App.tsx`, so the handle exists in `yarn dev` only:
 
 ```js
 __shoebox.world.player                        // Character: x, z, facing, tileX, tileZ

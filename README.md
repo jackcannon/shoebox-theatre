@@ -1,10 +1,14 @@
-# Mossvale — a Shoebox Theatre engine for the web
+# Shoebox Theatre
 
-A Shoebox Theatre engine: flat pixel-art characters standing in a lit, miniature 3D world. It runs in the browser on Vite, React 19, three.js and react-three-fiber.
+A game engine for 2D sprites in real 3D worlds: flat pixel-art characters standing in a lit, miniature 3D world. It runs in the browser on Vite, React 19, three.js and react-three-fiber.
 
-The sprites are upright planes that cast real shadows, and the camera looks down at a fixed angle. The Shoebox Theatre look comes from a tilt-shift blur that follows the player, bloom on lamps, windows and screens, ACES tone mapping and a vignette, plus foliage that sways in the wind, drifting light motes, animated water and light shafts through windows. All art is generated in code, including the characters, which are rendered from small 3D models into 8-direction pixel-art sprite sheets as the game loads.
+The sprites are upright planes that cast real shadows, and the camera looks down at a fixed angle. The look comes from a tilt-shift blur that follows the player, bloom on lamps, windows and screens, ACES tone mapping and a vignette, plus foliage that sways in the wind, drifting light motes, animated water and light shafts through windows. All art is generated in code, including the characters, which are rendered from small 3D models into 8-direction pixel-art sprite sheets as the game loads.
 
 The repo includes **Mossvale Village**, a small demo game with five maps: the village, your house (two floors), the neighbours' house and a research lab. You can walk around, enter buildings, read signs and talk to NPCs, and some conversations branch on choices and story flags.
+
+## Why the name
+
+A shoebox theatre is a home-made toy theatre: a shoebox turned on its side, with card scenery and cut-out characters standing inside it. This engine does the same thing in code. Flat 2D characters stand in a real 3D space, with real light and depth. Like a shoebox theatre, it can show any story, in any genre and any look.
 
 For contributors, [`docs/`](docs/README.md) is the full reference for the stack, architecture and each subsystem. AI agents should read [`AGENTS.md`](AGENTS.md) first.
 
@@ -45,10 +49,10 @@ Confirm or back while text is still typing shows the whole page at once.
 
 ```
 src/
-  main.tsx, App.tsx     mounts <Shoebox config={gameConfig} />
+  main.tsx, App.tsx     mounts <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
   engine/
     index.ts            public API: game code imports only from here
-    Shoebox.tsx        creates the GameRuntime, the 3D canvas and the UI overlay
+    Shoebox.tsx         creates the GameRuntime, the 3D canvas and the UI overlay
     types.ts            every public type (GameConfig, MapDefinition, TileType, MapObject, ...)
     math.ts             directions, seeded RNG, tile hash, damp, wait
     assets/             AssetManager, PixelCanvas and colour helpers, built-in textures, pixel-grid character generator
@@ -180,7 +184,7 @@ import { Well } from './prefabs'
 import { drawCobbles } from './textures'
 
 export const gameConfig: GameConfig = {
-  title: 'Mossvale — Shoebox Theatre Demo',
+  title: 'Mossvale: a Shoebox Theatre demo',
   start: { map: 'town', x: 5, y: 8, facing: 'down' },
   player: { sprite: 'hero' },
   maps: { town, playerHouse1F, playerHouse2F, neighbourHouse, lab, meadow },
@@ -479,9 +483,9 @@ camera: { fov: 28, pitch: 35, distance: 20 },
 
 ## Testing and debugging
 
-`yarn test` runs vitest in a node environment on `src/**/*.test.ts`. There are 50 tests in 7 files, covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, and the integrity of every map.
+`yarn test` runs vitest in a node environment on `src/**/*.test.ts`. There are 55 tests in 8 files, covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, the character model sheets, and the integrity of every map.
 
-In `yarn dev`, the runtime is exposed as `window.__shoebox` for the browser console. For example:
+With the `debug` prop on, `Shoebox` exposes the runtime as `window.__shoebox` for the browser console. The demo turns it on in `yarn dev` (`debug={import.meta.env.DEV}`). For example:
 
 ```js
 __shoebox.world.player              // position, facing, tile

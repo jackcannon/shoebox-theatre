@@ -78,7 +78,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 - **Tests:** add or update unit tests for any change to pure logic (world, collision, scripting, map data), then update the counts in [docs/testing.md](docs/testing.md).
 - **Anything visual or interactive**, such as rendering, look, input, UI, scripts or map layout, needs a browser check. Follow [docs/testing.md](docs/testing.md):
   - Run `yarn dev`.
-  - Drive the game with `KeyboardEvent`s and read state through `window.__shoebox`.
+  - Drive the game with `KeyboardEvent`s and read state through `window.__shoebox` (the demo turns on the `debug` prop in dev).
   - Take screenshots, and compare before and after from a fixed player position when changing the look.
 - **Clean up.** The game renders every frame and pins the CPU and GPU:
   - Stop any dev server you started.
@@ -110,7 +110,12 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 - **Only original content.** No names, characters, places, sprites, music, text or assets from any commercial game, and never name a commercial game, company or brand in the code or docs. The demo setting (Mossvale) and its characters are original; keep new content original too.
 - Art is generated in code ([docs/assets.md](docs/assets.md)). External assets (PNGs, audio) need a clear licence. Put them in `public/`, and record their source and licence in `docs/assets.md`.
 
-## 10. Working alongside other agents
+## 10. Naming
+
+- Describe the engine's style as "2D sprites in real 3D worlds".
+- The engine is "Shoebox Theatre" in full. Short forms use "Shoebox": the `Shoebox` component, the `shoebox-` CSS prefix and `window.__shoebox`.
+
+## 11. Working alongside other agents
 
 - Use one agent per working tree, dev server and browser tab. Don't run two agents on the same task at once.
 - If another agent's files, server or tab are active, leave them alone and coordinate through the user.
