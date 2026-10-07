@@ -49,7 +49,7 @@ Before every commit, match the files you changed against this table and update e
 
 | If you changed... | Check and update |
 |---|---|
-| `package.json`, `vite.config.ts`, `tsconfig*.json`, `.oxlintrc.json`, `index.html`, `public/` | stack.md, and testing.md for test config |
+| `package.json`, `.yarnrc.yml`, `vite.config.ts`, `tsconfig*.json`, `.oxlintrc.json`, `index.html`, `public/` | stack.md, and testing.md for test config |
 | `tools/*` | stack.md |
 | `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
 | `src/main.tsx`, `src/App.tsx`, `src/engine/Shoebox.tsx`, `src/engine/index.ts`, `src/engine/types.ts`, `src/engine/math.ts` | architecture.md, plus the subsystem doc for any type you changed |

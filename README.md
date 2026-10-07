@@ -14,7 +14,7 @@ For contributors, [`docs/`](docs/README.md) is the full reference for the stack,
 
 ## Quick start
 
-Requires Node 20.19+ or 22.12+ (Vite 8).
+Requires Node 20.19+ or 22.12+ (Vite 8). The repo pins its yarn version (yarn 4), so enable corepack once with `corepack enable`.
 
 ```bash
 yarn install
@@ -495,7 +495,7 @@ __shoebox.flags.set('metMom')
 
 ## Deployment
 
-The game deploys to [Dokku](https://dokku.com) as a static site. Buildpacks install the dependencies with yarn, run `yarn build`, and serve `dist/` with nginx. The files involved:
+The game deploys to [Dokku](https://dokku.com) as a static site. Buildpacks install the dependencies with yarn 4, run `yarn build`, and serve `dist/` with nginx. The files involved:
 
 - `.buildpacks`: the env, Node and nginx buildpacks, in that order.
 - `.dokku.env`: sets `NGINX_ROOT='dist'`.

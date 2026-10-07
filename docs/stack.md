@@ -25,7 +25,18 @@ There is no router, CSS framework, state library other than zustand, or R3F help
 | `oxlint` | 1 | Linting |
 | `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | — | Types |
 
-Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`. The package manager is yarn 1 (classic) with `yarn.lock`. There is no `package-lock.json`, and the Dokku build fails if one is added (see [Deployment](#deployment)).
+Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`.
+
+## Package manager
+
+The package manager is yarn 4, pinned in the `packageManager` field of `package.json` (`yarn@4.18.1+sha512...`). Corepack reads that field and runs that exact yarn version, so run `corepack enable` once for each Node version. `yarn.lock` is in the yarn 4 format. There is no `package-lock.json`, and the Dokku build fails if one is added (see [Deployment](#deployment)).
+
+`.yarnrc.yml` holds the yarn settings:
+
+- `enableTelemetry: false`
+- `nodeLinker: node-modules`: a normal `node_modules` folder instead of Plug'n'Play, which Vite, Vitest, oxlint and three.js expect.
+
+Yarn 4 defaults that matter here: dependency install scripts do not run (no dependency of this repo has one), an install that must not change the lockfile is `yarn install --immutable`, and `yarn global` does not exist (install global tools with `npm i -g`). Yarn 4 ignores `.npmrc` and `.yarnrc`. Its own files go in `.yarn/`, which `.gitignore` excludes.
 
 ## Scripts
 
@@ -60,16 +71,16 @@ The game deploys to Dokku as a static site. The server builds it from source on 
 
 - **`.buildpacks`** lists the buildpacks Dokku runs, in this order:
   1. `https://github.com/jackcannon/heroku-buildpack-env` loads `.dokku.env` into the build environment.
-  2. `https://github.com/jackcannon/heroku-buildpack-node` installs Node and yarn, runs `yarn install --frozen-lockfile`, then `yarn run build`, which writes `dist/`.
+  2. `https://github.com/jackcannon/heroku-buildpack-node` installs Node, sees a yarn 4 lockfile (the `__metadata` header), enables corepack and installs the yarn version from `packageManager`, runs `yarn install --immutable`, then `yarn run build`, which writes `dist/`. It fails if `.yarnrc.yml` is missing.
   3. `https://github.com/jackcannon/heroku-buildpack-nginx` compiles nginx, moves the app into `/app/www`, and makes nginx the `web` process.
 - **`.dokku.env`** sets `NGINX_ROOT='dist'`, so nginx serves `/app/www/dist`. The file is committed, so it must never hold secrets.
 - **`.static`** is empty. The nginx buildpack only runs when it exists.
 
 Constraints:
 
-- `package.json` has no `engines` field, so the Node buildpack installs its default Node 22.x line, which satisfies Vite 8. yarn is 1.22.x.
+- `package.json` has no `engines` field, so the Node buildpack installs its default Node 22.x line, which satisfies Vite 8 and includes corepack. Node 25 and later do not include corepack, so the build would fail on them.
 - The Node buildpack stops with "Multiple lockfiles found" if `yarn.lock` sits next to a `package-lock.json` or `pnpm-lock.yaml`. `npm install` creates a `package-lock.json` and rewrites `yarn.lock`, so install dependencies with yarn only.
-- `yarn install --frozen-lockfile` fails if `yarn.lock` doesn't match `package.json`. Commit `yarn.lock` with every dependency change.
+- `yarn install --immutable` fails if `yarn.lock` doesn't match `package.json`. Commit `yarn.lock` with every dependency change.
 - nginx uses the buildpack's default config: an unknown path returns 404, not `index.html`. The game has no client-side routes, so nothing needs that fallback.
 
 To deploy, push `master` to the Dokku remote: `git push <dokku-remote> master`.
