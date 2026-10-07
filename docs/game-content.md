@@ -1,6 +1,6 @@
 # Game content: Mossvale Village
 
-`src/game/` is the demo game. It is data and scripts only, importing from `src/engine` through its index. All names, text and art are original. It must never contain Pokémon names, text or assets, or any other copyrighted game material.
+`src/game/` is the demo game. It is data and scripts only, importing from `src/engine` through its index. All names, text and art are original. It must never contain names, text or assets from any commercial game, or any other copyrighted material.
 
 ## Files
 

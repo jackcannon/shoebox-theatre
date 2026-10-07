@@ -1,6 +1,6 @@
 # Mossvale — a Shoebox Theatre engine for the web
 
-A Shoebox Theatre engine in the style of Octopath Traveler and the Dragon Quest III remake: flat pixel-art characters standing in a lit, miniature 3D diorama. It runs in the browser on Vite, React 19, three.js and react-three-fiber.
+A Shoebox Theatre engine: flat pixel-art characters standing in a lit, miniature 3D world. It runs in the browser on Vite, React 19, three.js and react-three-fiber.
 
 The sprites are upright planes that cast real shadows, and the camera looks down at a fixed angle. The Shoebox Theatre look comes from a tilt-shift blur that follows the player, bloom on lamps, windows and screens, ACES tone mapping and a vignette, plus foliage that sways in the wind, drifting light motes, animated water and light shafts through windows. All art is generated in code, including the characters, which are rendered from small 3D models into 8-direction pixel-art sprite sheets as the game loads.
 

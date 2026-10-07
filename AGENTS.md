@@ -107,7 +107,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 
 ## 9. Content and assets
 
-- **Only original content.** No Pokémon names, characters, places, sprites, music or text, and no assets or names from any other commercial game. The demo setting (Mossvale) and its characters are original; keep new content original too.
+- **Only original content.** No names, characters, places, sprites, music, text or assets from any commercial game, and never name a commercial game, company or brand in the code or docs. The demo setting (Mossvale) and its characters are original; keep new content original too.
 - Art is generated in code ([docs/assets.md](docs/assets.md)). External assets (PNGs, audio) need a clear licence. Put them in `public/`, and record their source and licence in `docs/assets.md`.
 
 ## 10. Working alongside other agents
