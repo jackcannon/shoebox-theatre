@@ -50,7 +50,7 @@ The repo is a yarn workspace (`"workspaces": ["packages/*", "games/*"]` in the r
 
 - Each workspace that uses `@react-three/fiber` provides `@types/react` and `@types/three`, and each workspace with a Vite config provides `vite`, because those packages ask for them as peers. Yarn hoists one copy of each package to the root `node_modules`.
 - Nx needs no plugins. It turns each workspace's `package.json` `scripts` into targets. `nx.json` sets caching and inputs: `build`, `typecheck` and `test` are cached, and a game's cache depends on the engine source (`^production`), because games use that source directly ([architecture.md](architecture.md#workspaces-and-the-source-condition)).
-- Nx Cloud is not used, and the Nx daemon is not needed. The cache lives in `.nx/`, which `.gitignore` excludes. Yarn 4 does not run the `nx` package's install script, and Nx works without it.
+- Nx Cloud is not used (`neverConnectToCloud` in `nx.json`), and the Nx daemon is not needed. The cache lives in `.nx/`, which `.gitignore` excludes. Yarn 4 does not run the `nx` package's install script, and Nx works without it.
 
 ## Scripts
 

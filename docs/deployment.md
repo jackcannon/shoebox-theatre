@@ -29,8 +29,10 @@ Run deploys from your machine, from a clean `master` that matches `origin/master
 
 | Command | What it deploys |
 |---|---|
-| `yarn deploy` | Only the games affected since the last deploy: `nx affected -t deploy --base=deployed --head=HEAD --parallel=2` |
-| `yarn deploy:all` | Every game: `nx run-many -t deploy --parallel=2` |
+| `yarn deploy` | Only the games affected since the last deploy: `nx affected -t deploy --base=deployed --head=HEAD --parallel=2 --output-style=stream` |
+| `yarn deploy:all` | Every game: `nx run-many -t deploy --parallel=2 --output-style=stream` |
+
+`--output-style=stream` shows each Dokku build log as it runs, prefixed with the game's name.
 
 `tools/deploy.sh` runs both:
 

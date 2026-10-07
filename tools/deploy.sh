@@ -9,9 +9,9 @@ git fetch origin master --tags --force
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/master)" ] || { echo 'Push master to origin first.' >&2; exit 1; }
 
 if [ "${1:-}" = --all ] || ! git rev-parse -q --verify refs/tags/deployed > /dev/null; then
-  yarn nx run-many -t deploy --parallel=2
+  yarn nx run-many -t deploy --parallel=2 --output-style=stream
 else
-  yarn nx affected -t deploy --base=deployed --head=HEAD --parallel=2
+  yarn nx affected -t deploy --base=deployed --head=HEAD --parallel=2 --output-style=stream
 fi
 
 git tag -f deployed

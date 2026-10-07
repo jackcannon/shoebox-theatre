@@ -39,5 +39,6 @@
       ],
       "cache": true
     }
-  }
+  },
+  "neverConnectToCloud": true
 }
