@@ -50,11 +50,11 @@ interface PrefabProps { object: MapObject; w: number; d: number }
 | `bed` | `Bed` | `color` (`#4f7fc0`) | Frame, mattress, pillow at the north end and a quilt blanket. Use `d: 2`. |
 | `plant` | `Plant` | — | Terracotta pot with leafy icosahedron blobs |
 | `rug` | `Rug` | `color` (`#3f6fa8`) | Flat, receive-only plane covering `w × d` |
-| `stairs` | `Stairs` | `down` (false) | Five steps and a rail. By default the steps rise towards the back wall. `down` reverses them so they descend towards the back wall. Keep the tile walkable, since it holds the warp. |
+| `stairs` | `Stairs` | `down` (false) | By default, five steps and a rail rising from left to right. `down` cuts a stairwell into the floor: four steps of the same wood drop from left to right, with a back wall, an end wall and a floor, and nothing above the floor. The tile under a down flight needs `ground: 'none'` (and `side: 'none'`) so the floor does not cover the opening. Keep the tile walkable, since it holds the warp. |
 | `desk` | `Desk` | — | Desk with a PC monitor (emissive `drawScreen('pc')`) and a keyboard |
 | `machine` | `Machine` | `seed` (from position) | Tall grey box with a painted panel and a pulsing emissive map |
 | `pedestal` | `Pedestal` | — | Round table with three emissive crystals (cyan, pink, gold) that bob and spin |
-| `window` | `WallWindow` | — | **Wall-mounted.** Frame, emissive glass and sill, plus an additive `lightShaft` plane sloping 2.5 tiles out onto the floor and a soft light patch |
+| `window` | `WallWindow` | — | **Wall-mounted.** Frame, emissive glass and sill, plus an additive `lightShaft` plane sloping 2.5 tiles out onto the floor and a soft light patch. Both are `renderOrder` 3 and do not write depth; character sprites draw after them |
 | `doormat` | `Doormat` | `color` (`#b8433a`) | Striped floor mat |
 | `painting` | `Painting` | — | **Wall-mounted.** Gilt frame and painted canvas at y ≈ 1.6 |
 

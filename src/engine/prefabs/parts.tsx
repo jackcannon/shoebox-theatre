@@ -80,6 +80,7 @@ export interface BoxProps {
   emissiveIntensity?: number
   roughness?: number
   castShadow?: boolean
+  receiveShadow?: boolean
   rotation?: Vec3
 }
 
@@ -93,6 +94,7 @@ export function Box({
   emissiveIntensity = 1,
   roughness = 0.9,
   castShadow = true,
+  receiveShadow = true,
   rotation,
 }: BoxProps) {
   const [w, h, d] = size
@@ -102,7 +104,7 @@ export function Box({
   )
   useEffect(() => () => geometry.dispose(), [geometry])
   return (
-    <mesh geometry={geometry} position={position} rotation={rotation} castShadow={castShadow} receiveShadow>
+    <mesh geometry={geometry} position={position} rotation={rotation} castShadow={castShadow} receiveShadow={receiveShadow}>
       <meshStandardMaterial
         color={color}
         map={map}

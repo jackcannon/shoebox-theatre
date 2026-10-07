@@ -51,7 +51,7 @@ export function Particles({ world, count, color, size = 0.08 }: { world: World; 
   })
 
   return (
-    <points ref={ref} frustumCulled={false}>
+    <points ref={ref} frustumCulled={false} renderOrder={5}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />

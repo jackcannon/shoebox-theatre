@@ -281,7 +281,7 @@ More map options:
 | `table` | `vase` |
 | `bookshelf`, `machine` | `seed` (varies the painted detail) |
 | `counter`, `tv`, `plant`, `desk`, `pedestal` | none |
-| `stairs` | `down` (false; when true, steps descend toward the back wall) |
+| `stairs` | `down` (false). Steps run left to right. When true, a stairwell recessed into the floor. That tile needs `ground: 'none'`. |
 | `window`, `painting` | none. Place them on a row-0 wall tile with `solid: false`; they drop themselves to floor height. |
 
 A building's door warp goes on the tile just south of the footprint, at column `x + door` and row `y + d`, with `dir: 'up'`. Mark rugs, doormats and stairs `solid: false` so they can be walked on.

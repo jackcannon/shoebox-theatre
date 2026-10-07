@@ -6,7 +6,7 @@ export const playerHouse2F: MapDefinition = {
   name: 'Your Room',
   tiles: [
     'WWWWWWWWWW',
-    'W........W',
+    'W.......vW',
     'W........W',
     'W........W',
     'W........W',
@@ -16,6 +16,7 @@ export const playerHouse2F: MapDefinition = {
   palette: {
     W: { ...TILES.wall, side: 'wallpaper' },
     '.': TILES.woodFloor,
+    v: { ground: 'none', side: 'none' },
   },
   objects: [
     {

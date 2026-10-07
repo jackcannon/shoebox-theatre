@@ -239,40 +239,97 @@ export function Rug({ object, w, d }: PrefabProps) {
   )
 }
 
-export function Stairs({ object, w, d }: PrefabProps) {
-  const down = prop(object, 'down', false)
+function StairsUp({ w, d }: { w: number; d: number }) {
   const steps = 5
   const riser = 0.3
-  const run = d / steps
-  const railX = w - 0.06
-  const lowZ = down ? run / 2 : d - run / 2
-  const highZ = down ? d - run / 2 : run / 2
+  const run = w / steps
+  const railZ = 0.05
+  const lowX = run / 2
+  const highX = w - run / 2
   const railRise = (steps - 1) * riser
-  const railLength = Math.hypot(railRise, highZ - lowZ)
+  const railLength = Math.hypot(railRise, highX - lowX)
   return (
     <>
       {Array.from({ length: steps }, (_, i) => {
         const h = (i + 1) * riser
-        const along = (i + 0.5) * run
         return (
           <Box
             key={i}
-            size={[w - 0.2, h, run]}
-            position={[w / 2 - 0.04, h / 2, down ? along : d - along]}
+            size={[run, h, d - 0.12]}
+            position={[(i + 0.5) * run, h / 2, d / 2 + 0.04]}
             color={i % 2 ? WOOD : shade(WOOD, 0.08)}
           />
         )
       })}
-      <Box size={[0.06, riser + 0.7, 0.06]} position={[railX, (riser + 0.7) / 2, lowZ]} color={DARK_WOOD} />
-      <Box size={[0.06, steps * riser + 0.7, 0.06]} position={[railX, (steps * riser + 0.7) / 2, highZ]} color={DARK_WOOD} />
+      <Box size={[0.06, riser + 0.7, 0.06]} position={[lowX, (riser + 0.7) / 2, railZ]} color={DARK_WOOD} />
+      <Box size={[0.06, steps * riser + 0.7, 0.06]} position={[highX, (steps * riser + 0.7) / 2, railZ]} color={DARK_WOOD} />
       <Box
-        size={[0.05, 0.05, railLength]}
-        position={[railX, riser + 0.7 + railRise / 2, (lowZ + highZ) / 2]}
-        rotation={[Math.atan2(railRise, lowZ - highZ), 0, 0]}
+        size={[railLength, 0.05, 0.05]}
+        position={[(lowX + highX) / 2, riser + 0.7 + railRise / 2, railZ]}
+        rotation={[0, 0, Math.atan2(railRise, highX - lowX)]}
         color={DARK_WOOD}
       />
     </>
   )
+}
+
+/** Stairwell cut into the floor, running left to right. The tile under it must not draw a ground face. */
+function StairsDown({ w, d }: { w: number; d: number }) {
+  const count = 4
+  const riser = 0.22
+  const lip = 0.08
+  const run = (w - lip) / count
+  const depth = d - lip
+  const pit = (count + 1) * riser
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => {
+        const top = -(i + 1) * riser
+        return (
+          <Box
+            key={i}
+            size={[run + 0.012, riser, depth]}
+            position={[(i + 0.5) * run, top - riser / 2, lip + depth / 2]}
+            color={i % 2 ? WOOD : shade(WOOD, 0.08)}
+            castShadow={false}
+            receiveShadow={false}
+          />
+        )
+      })}
+      <Box
+        size={[w - lip, riser, depth]}
+        position={[(w - lip) / 2, -pit - riser / 2, lip + depth / 2]}
+        color={shade(WOOD, -0.12)}
+        emissive={shade(WOOD, -0.12)}
+        emissiveIntensity={0.45}
+        castShadow={false}
+        receiveShadow={false}
+      />
+      <Box
+        size={[w, pit, lip]}
+        position={[w / 2, -pit / 2, lip / 2]}
+        color={DARK_WOOD}
+        emissive={DARK_WOOD}
+        emissiveIntensity={0.5}
+        castShadow={false}
+        receiveShadow={false}
+      />
+      <Box
+        size={[lip, pit, d]}
+        position={[w - lip / 2, -pit / 2, d / 2]}
+        color={DARK_WOOD}
+        emissive={DARK_WOOD}
+        emissiveIntensity={0.5}
+        castShadow={false}
+        receiveShadow={false}
+      />
+    </>
+  )
+}
+
+export function Stairs({ object, w, d }: PrefabProps) {
+  if (prop(object, 'down', false)) return <StairsDown w={w} d={d} />
+  return <StairsUp w={w} d={d} />
 }
 
 export function Desk({ w }: PrefabProps) {

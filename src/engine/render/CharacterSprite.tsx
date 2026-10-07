@@ -35,9 +35,17 @@ export function CharacterSprite({ character, stretch }: { character: Character; 
 
   return (
     <group ref={group}>
-      <mesh ref={body} castShadow receiveShadow>
+      <mesh ref={body} castShadow receiveShadow renderOrder={4}>
         <planeGeometry args={[width, height]} />
-        <meshStandardMaterial map={texture} alphaTest={0.5} side={DoubleSide} roughness={1} metalness={0} />
+        <meshStandardMaterial
+          map={texture}
+          alphaTest={0.5}
+          transparent
+          depthWrite
+          side={DoubleSide}
+          roughness={1}
+          metalness={0}
+        />
       </mesh>
       <mesh rotation-x={-Math.PI / 2} position-y={0.015} renderOrder={2}>
         <planeGeometry args={[width * 0.85, width * 0.45]} />
