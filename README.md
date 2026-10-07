@@ -518,8 +518,22 @@ git push <dokku-remote> master
 
 See [docs/stack.md](docs/stack.md#deployment) for how the buildpacks work.
 
+## Use the engine in your own game
+
+The engine is set up as the npm package `shoeboxtheatre`. No version is published yet; the first one will be `0.1.0`. A game outside this monorepo will install it with its peer dependencies:
+
+```bash
+yarn add shoeboxtheatre react react-dom three @react-three/fiber @react-three/postprocessing postprocessing
+```
+
+[`packages/engine/README.md`](packages/engine/README.md) (the npm page) has a quick start. The package is for bundlers such as Vite, because it imports CSS. How releases work is in [docs/releasing.md](docs/releasing.md).
+
 ## Credits
 
 - All art is original and generated procedurally in code: terrain, props, characters, water and light effects. The project uses no third-party game assets, and the village, characters and dialogue are original.
 - Font: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) (SIL Open Font License 1.1), via `@fontsource/pixelify-sans`.
 - Built with [three.js](https://threejs.org), [react-three-fiber](https://r3f.docs.pmnd.rs), [@react-three/postprocessing](https://github.com/pmndrs/react-postprocessing), [zustand](https://github.com/pmndrs/zustand) and [Vite](https://vite.dev).
+
+## Licence
+
+MIT. See [LICENSE](LICENSE).

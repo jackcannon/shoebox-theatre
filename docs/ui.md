@@ -26,7 +26,7 @@ The UI is plain React DOM over the canvas, in `packages/engine/src/ui/`. It hold
 
 ## Styling (`ui.css`)
 
-`Shoebox.tsx` imports `ui.css`. `GameUI.tsx` imports the Pixelify Sans font at weights 400 and 600.
+`GameUI.tsx` imports `ui.css` and the Pixelify Sans font at weights 400 and 600. Keep CSS imports out of `Shoebox.tsx` and other files whose types the package exports: `tsc` keeps side-effect imports in the emitted `.d.ts` files, and a `.css` import there breaks type resolution for games.
 
 - **Font and colour:** `.shoebox-root` sets `font-family: 'Pixelify Sans', system-ui, sans-serif`, text colour `#f5ecd7` and `user-select: none`.
 - **Panels:** `.shoebox-panel` is shared by the dialogue and choice boxes. It has:

@@ -6,8 +6,6 @@ import { GameCanvas } from './render/GameCanvas'
 import type { GameConfig } from './types'
 import { GameUI } from './ui/GameUI'
 
-import './ui/ui.css'
-
 /**
  * Mounts a game: creates the runtime, the 3D canvas and the UI overlay.
  * @param config - game definition; must be a stable, module-level constant

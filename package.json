@@ -12,7 +12,8 @@
     "build": "nx run-many -t typecheck build",
     "test": "nx run-many -t test",
     "lint": "oxlint",
-    "preview": "nx run mossvale:preview"
+    "preview": "nx run mossvale:preview",
+    "release:version": "bash tools/release-version.sh"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

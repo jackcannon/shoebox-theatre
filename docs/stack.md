@@ -60,15 +60,16 @@ Root scripts (run them from the repo root):
 |---|---|
 | `yarn dev` | `nx run mossvale:dev`: the Vite dev server for Mossvale on http://localhost:5173. The demo turns on `debug`, so the runtime is `window.__shoebox` (see [testing.md](testing.md)) |
 | `yarn test` | `nx run-many -t test`: `vitest run` in every project |
-| `yarn build` | `nx run-many -t typecheck build`: `tsc -p tsconfig.json` in every project, then each project's `build`. Mossvale builds into `games/mossvale/dist/`. |
+| `yarn build` | `nx run-many -t typecheck build`: `tsc -p tsconfig.json` in every project, then each project's `build`. Mossvale builds into `games/mossvale/dist/`, and the engine into `packages/engine/dist/`. |
 | `yarn lint` | `oxlint` over the repo |
 | `yarn preview` | `nx run mossvale:preview`: serves `games/mossvale/dist/` |
+| `yarn release:version <bump>` | `tools/release-version.sh`: bumps the engine version, commits and tags it ([releasing.md](releasing.md)) |
 
 Project scripts (run one with `yarn nx run <project>:<target>`):
 
 | Project | Targets |
 |---|---|
-| `shoeboxtheatre` | `typecheck` (`tsc -p tsconfig.json`), `test` (`vitest run`) |
+| `shoeboxtheatre` | `build` (`tsc -p tsconfig.lib.json` into `dist/`, then copies `ui.css`), `dev` (the same `tsc` in watch mode, for linking the engine into another repo), `typecheck` (`tsc -p tsconfig.json`), `test` (`vitest run`) |
 | `mossvale` | `dev` (`vite`), `build` (`vite build`), `preview` (`vite preview`), `typecheck` (`tsc -p tsconfig.json`), `test` (`vitest run`) |
 
 Mossvale's build prints a Vite advisory that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
@@ -83,6 +84,7 @@ Mossvale's build prints a Vite advisory that the single JS chunk is over 500 kB 
   - `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`: unused code fails the type check.
 - **`packages/engine/tsconfig.json`** covers `src` and `vite.config.ts`, with `types: ["vite/client"]`. TypeScript 6 checks side-effect imports, and the Vite client types declare the engine's CSS imports.
 - **`games/mossvale/tsconfig.json`** covers `src` and `vite.config.ts`, with `types: ["vite/client", "node"]` and `allowImportingTsExtensions` (so `import App from './App.tsx'` works).
+- **`packages/engine/tsconfig.lib.json`** extends the engine `tsconfig.json` for the package build: `noEmit: false`, `declaration`, `outDir: dist`, `rootDir: src`, and it excludes `src/**/*.test.ts`.
 - **`packages/engine/vite.config.ts`**: only a Vitest block, `test: { environment: 'node', include: ['src/**/*.test.ts'] }`.
 - **`games/mossvale/vite.config.ts`**: the React plugin, the `@shoeboxtheatre/source` condition first in `resolve.conditions` and `ssr.resolve.conditions`, and the same Vitest block. Both Vite configs are typed through `/// <reference types="vitest/config" />`.
 - **`nx.json`**: named inputs and target defaults (see above).

@@ -44,7 +44,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 - **Nothing per-frame goes through React.** Per-frame state lives on `GameRuntime`, `World` and `Character`, and in refs, and is read and written in `useFrame`. The zustand UI store is for UI only and changes on events, never every frame.
 - Frame order comes from `useFrame` priorities: `GameLoop` −2, `FollowCamera` −1, everything else 0, `EffectComposer` 1. Code that depends on ordering needs an explicit priority.
 - Units are 1 tile = 1 world unit and 16 texture pixels per unit. A map's `y` is world `z`, and north is −z. Keep new art at whole-pixel sizes.
-- Anything game code needs is exported from `packages/engine/src/index.ts` deliberately. Adding to or changing the public API means updating the API table in `docs/architecture.md`, and `README.md` if users see it.
+- Anything game code needs is exported from `packages/engine/src/index.ts` deliberately. Adding to or changing the public API means updating the API table in `docs/architecture.md`, and `README.md` if users see it. The engine is a published npm package, so a breaking change needs a matching semver bump at the next release ([docs/releasing.md](docs/releasing.md)).
 - Dispose every three.js geometry, material and texture you create outside the shared caches. `useGenerated()` keys must include every input that affects the output.
 - Generated art must be deterministic (`createRng`, `hashTile`). `Math.random()` is only acceptable for runtime-only effects such as particles and NPC AI timing.
 - The `GameConfig` passed to `<Shoebox>` must be a stable, module-level constant.
@@ -105,6 +105,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
   - Stage specific paths rather than `git add -A`.
   - Keep one logical change per commit, with a short imperative subject line.
 - Never commit `node_modules/`, `dist/`, `.agent-files/`, `.agent-tmp/`, secrets or large binaries.
+- Never publish to npm (`yarn npm publish`) or run `yarn release:version` without the user's approval. A published version can't be taken back.
 
 ## 9. Content and assets
 

@@ -34,6 +34,7 @@ Engine docs describe what `packages/engine/src` can do for any game. Game docs d
 | [ui.md](ui.md) | The DOM overlay: UI state, components, CSS and font |
 | [testing.md](testing.md) | Unit tests, what each file covers, the dev debug handle, driving the game in a browser |
 | [extending.md](extending.md) | Where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI, and what to update |
+| [releasing.md](releasing.md) | The `shoeboxtheatre` npm package: build, contents, `exports`, peer dependencies, checks and release steps |
 | [known-issues.md](known-issues.md) | Current bugs, limitations, lint warnings and features that don't exist yet |
 
 ### Mossvale demo game
@@ -52,7 +53,8 @@ Before every commit, match the files you changed against this table and update e
 | `package.json` (root), `.yarnrc.yml`, `nx.json`, `tsconfig.base.json`, `.oxlintrc.json` | stack.md, architecture.md (folder map) |
 | `packages/engine/package.json`, `packages/engine/tsconfig.json`, `packages/engine/vite.config.ts` | stack.md, and testing.md for test config |
 | `games/*/package.json`, `games/*/tsconfig.json`, `games/*/vite.config.ts`, `games/*/index.html`, `games/*/public/` | stack.md, and testing.md for test config |
-| `tools/*` | stack.md |
+| `tools/*` | stack.md, and releasing.md for `tools/release-version.sh` |
+| `packages/engine/README.md`, `packages/engine/tsconfig.lib.json`, `LICENSE` | releasing.md |
 | `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
 | `games/mossvale/src/main.tsx`, `games/mossvale/src/App.tsx`, `packages/engine/src/Shoebox.tsx`, `packages/engine/src/index.ts`, `packages/engine/src/types.ts`, `packages/engine/src/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
 | `packages/engine/src/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |

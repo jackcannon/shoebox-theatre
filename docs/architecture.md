@@ -75,7 +75,7 @@ games/mossvale/             the demo game, workspace "mossvale" (private)
 
 - Games depend on the engine with `"shoeboxtheatre": "workspace:^"`, so yarn links `node_modules/shoeboxtheatre` to `packages/engine`.
 - The engine `package.json` `exports` field has a custom condition first: `"@shoeboxtheatre/source": "./src/index.ts"`. Each game's `vite.config.ts` puts that condition first in `resolve.conditions` (browser) and `ssr.resolve.conditions` (Vitest in node), and `tsconfig.base.json` sets it in `customConditions`. So games, their tests and their type checks use the engine's TypeScript source directly. An engine edit hot-reloads in the running game, and a game build does not need an engine build.
-- Without the condition, the same `exports` field points to the built `dist/`.
+- Without the condition, the same `exports` field points to the built `dist/`. That is what games outside the monorepo get from npm ([releasing.md](releasing.md)).
 - Package boundaries do the work of lint rules: `exports` allows only `shoeboxtheatre` (no deep imports), the engine has no dependency on any game, and a game can import another game only if it declares it as a dependency.
 
 Each subsystem has its own doc: [world.md](world.md), [scripting.md](scripting.md), [rendering.md](rendering.md), [assets.md](assets.md), [character-models.md](character-models.md), [prefabs.md](prefabs.md), [ui.md](ui.md). The demo game is described in [game-content.md](../games/mossvale/docs/game-content.md) and [game-art-style.md](../games/mossvale/docs/game-art-style.md).

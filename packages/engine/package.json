@@ -1,7 +1,33 @@
 {
   "name": "shoeboxtheatre",
   "version": "0.0.0",
+  "description": "A game engine for 2D sprites in real 3D worlds, built on React Three Fiber.",
+  "keywords": [
+    "game-engine",
+    "react-three-fiber",
+    "three",
+    "pixel-art",
+    "sprites",
+    "2.5d"
+  ],
+  "license": "MIT",
+  "author": "Jack Cannon",
+  "homepage": "https://github.com/jackcannon/shoebox-theatre#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackcannon/shoebox-theatre.git",
+    "directory": "packages/engine"
+  },
+  "bugs": "https://github.com/jackcannon/shoebox-theatre/issues",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "@shoeboxtheatre/source": "./src/index.ts",
@@ -9,7 +35,12 @@
       "default": "./dist/index.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.lib.json && cp src/ui/ui.css dist/ui/ui.css",
+    "dev": "tsc -p tsconfig.lib.json --watch",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run"
   },

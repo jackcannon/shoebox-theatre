@@ -7,6 +7,7 @@ import { LocationBanner } from './LocationBanner'
 
 import '@fontsource/pixelify-sans/400.css'
 import '@fontsource/pixelify-sans/600.css'
+import './ui.css'
 
 /** DOM overlay drawn over the canvas: banner, fade, dialogue, choices and the loading screen. */
 export function GameUI({ title }: { title: string }) {
