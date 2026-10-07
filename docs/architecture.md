@@ -8,6 +8,7 @@ The repo is an Nx monorepo with yarn workspaces. It has a reusable engine, the n
 package.json                root workspace (private): workspaces, root scripts, shared dev tools
 nx.json                     Nx caching and inputs; targets come from each package.json "scripts"
 tsconfig.base.json          shared compiler options, including the @shoeboxtheatre/source condition
+tools/                      Dokku build and deploy scripts, the release script, the game generator
 packages/engine/            the engine package "shoeboxtheatre"
   package.json              exports, dependencies, peer dependencies, scripts
   vite.config.ts            Vitest settings only
