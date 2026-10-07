@@ -1,6 +1,6 @@
 # Project docs
 
-These docs explain how the project works: the stack, the architecture, every subsystem of the engine in `src/engine`, and the Mossvale demo game in `src/game`. They are written for AI agents and developers who are about to change the code.
+These docs explain how the project works: the stack, the architecture, every subsystem of the engine in `packages/engine/src`, and the Mossvale demo game in `games/mossvale/src`. They are written for AI agents and developers who are about to change the code.
 
 - How an agent should **behave** in this repo (rules, workflow, style, the docs-update rule) is in [`../AGENTS.md`](../AGENTS.md).
 - The user-facing overview, quick start and tutorial-style snippets are in the root [`README.md`](../README.md).
@@ -16,7 +16,7 @@ The docs describe the code as it is now. If a doc and the code disagree, the cod
 
 ## Index
 
-Engine docs describe what `src/engine` can do for any game. Game docs describe the Mossvale demo in `src/game`: its content and the choices it makes with the engine. Keep them apart. Don't put Mossvale names, maps or art decisions in an engine doc; link to the game doc instead.
+Engine docs describe what `packages/engine/src` can do for any game. Game docs describe the Mossvale demo in `games/mossvale/src`: its content and the choices it makes with the engine. Keep them apart. Don't put Mossvale names, maps or art decisions in an engine doc; link to the game doc instead.
 
 ### Project and engine
 
@@ -40,8 +40,8 @@ Engine docs describe what `src/engine` can do for any game. Game docs describe t
 
 | Doc | Covers |
 |---|---|
-| [game-content.md](game-content.md) | Config, characters, maps, links between maps, scripts and flags |
-| [game-art-style.md](game-art-style.md) | The characters' visual style, the hero's design, and the rules for new characters |
+| [game-content.md](../games/mossvale/docs/game-content.md) | Config, characters, maps, links between maps, scripts and flags |
+| [game-art-style.md](../games/mossvale/docs/game-art-style.md) | The characters' visual style, the hero's design, and the rules for new characters |
 
 ## Which doc to update
 
@@ -49,22 +49,24 @@ Before every commit, match the files you changed against this table and update e
 
 | If you changed... | Check and update |
 |---|---|
-| `package.json`, `.yarnrc.yml`, `vite.config.ts`, `tsconfig*.json`, `.oxlintrc.json`, `index.html`, `public/` | stack.md, and testing.md for test config |
+| `package.json` (root), `.yarnrc.yml`, `nx.json`, `tsconfig.base.json`, `.oxlintrc.json` | stack.md, architecture.md (folder map) |
+| `packages/engine/package.json`, `packages/engine/tsconfig.json`, `packages/engine/vite.config.ts` | stack.md, and testing.md for test config |
+| `games/*/package.json`, `games/*/tsconfig.json`, `games/*/vite.config.ts`, `games/*/index.html`, `games/*/public/` | stack.md, and testing.md for test config |
 | `tools/*` | stack.md |
 | `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
-| `src/main.tsx`, `src/App.tsx`, `src/engine/Shoebox.tsx`, `src/engine/index.ts`, `src/engine/types.ts`, `src/engine/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
-| `src/engine/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |
-| `src/engine/core/Input.ts` | architecture.md (input), README.md (controls), ui.md if the controls hint text changes |
-| `src/engine/core/uiStore.ts`, `src/engine/core/context.ts` | architecture.md, ui.md |
-| `src/engine/world/*` | world.md, coordinates-and-units.md if units or axes change |
-| `src/engine/scripting/*` | scripting.md |
-| `src/engine/render/*` | rendering.md |
-| `src/engine/assets/*` | assets.md |
-| `src/engine/sprites/*` | character-models.md, and game-art-style.md if the look of rendered characters changes |
-| `src/engine/prefabs/*` | prefabs.md |
-| `src/engine/ui/*` | ui.md |
-| `src/game/characterModels.ts`, `src/game/characters.ts` | game-art-style.md, game-content.md (Characters) |
-| `src/game/*` | game-content.md |
+| `games/mossvale/src/main.tsx`, `games/mossvale/src/App.tsx`, `packages/engine/src/Shoebox.tsx`, `packages/engine/src/index.ts`, `packages/engine/src/types.ts`, `packages/engine/src/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
+| `packages/engine/src/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |
+| `packages/engine/src/core/Input.ts` | architecture.md (input), README.md (controls), ui.md if the controls hint text changes |
+| `packages/engine/src/core/uiStore.ts`, `packages/engine/src/core/context.ts` | architecture.md, ui.md |
+| `packages/engine/src/world/*` | world.md, coordinates-and-units.md if units or axes change |
+| `packages/engine/src/scripting/*` | scripting.md |
+| `packages/engine/src/render/*` | rendering.md |
+| `packages/engine/src/assets/*` | assets.md |
+| `packages/engine/src/sprites/*` | character-models.md, and game-art-style.md if the look of rendered characters changes |
+| `packages/engine/src/prefabs/*` | prefabs.md |
+| `packages/engine/src/ui/*` | ui.md |
+| `games/mossvale/src/characterModels.ts`, `games/mossvale/src/characters.ts` | game-art-style.md, game-content.md (Characters) |
+| `games/mossvale/src/*` | game-content.md |
 | any `*.test.ts` | testing.md (file list and test counts) |
 | a bug fixed or found, a limitation added or removed | known-issues.md |
 | a new way to extend the engine | extending.md |

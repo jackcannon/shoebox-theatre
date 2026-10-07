@@ -1,4 +1,4 @@
-import { characterModelSheet, type SpriteSheetDefinition } from '../engine'
+import { characterModelSheet, type SpriteSheetDefinition } from 'shoeboxtheatre'
 
 import { characterModels } from './characterModels'
 

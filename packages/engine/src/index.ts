@@ -10,6 +10,7 @@ export type { ScriptContext, CharacterHandle } from './scripting/ScriptContext'
 export { characterModelSheet } from './sprites/characterModelSheet'
 export type { CharacterModel, CharacterModelPalette, HairStyle, Outfit } from './sprites/model'
 export { TILES, DEFAULT_SURFACES } from './world/surfaces'
+export { World } from './world/World'
 
 export { Shoebox } from './Shoebox'
 export type * from './types'

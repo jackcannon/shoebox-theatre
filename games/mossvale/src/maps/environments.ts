@@ -1,4 +1,4 @@
-import type { CameraSettings, EnvironmentSettings } from '../../engine'
+import type { CameraSettings, EnvironmentSettings } from 'shoeboxtheatre'
 
 export const outdoorDay: EnvironmentSettings = {
   background: '#a9d3e8',

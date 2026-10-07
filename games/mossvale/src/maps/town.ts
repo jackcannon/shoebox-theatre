@@ -1,4 +1,4 @@
-import { TILES, type MapDefinition } from '../../engine'
+import { TILES, type MapDefinition } from 'shoeboxtheatre'
 import { outdoorDay } from './environments'
 
 export const town: MapDefinition = {

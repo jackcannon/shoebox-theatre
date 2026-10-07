@@ -1,14 +1,14 @@
 # Stack and tooling
 
-A browser game built with Vite, React 19, TypeScript, three.js and react-three-fiber (R3F). There is no backend, network code or persistence. `package.json` is the source of truth for exact versions; the table lists the major versions the code is written against.
+A browser game built with Vite, React 19, TypeScript, three.js and react-three-fiber (R3F). There is no backend, network code or persistence. Each workspace's `package.json` is the source of truth for exact versions; the table lists the major versions the code is written against.
 
 ## Runtime dependencies
 
 | Package | Version | Used for |
 |---|---|---|
-| `react`, `react-dom` | 19 | App shell and the DOM UI overlay (`src/engine/ui`) |
+| `react`, `react-dom` | 19 | App shell and the DOM UI overlay (`packages/engine/src/ui`) |
 | `three` | 0.186 (r186) | Geometry, materials, textures, shaders |
-| `@react-three/fiber` | 9 | Declarative three.js scene, `useFrame` game loop (`src/engine/render`) |
+| `@react-three/fiber` | 9 | Declarative three.js scene, `useFrame` game loop (`packages/engine/src/render`) |
 | `@react-three/postprocessing` + `postprocessing` | 3 + 6 | Bloom, tilt-shift, hue/saturation, tone mapping, vignette (`render/PostEffects.tsx`) |
 | `zustand` | 5 | Vanilla store for UI-only state (`core/uiStore.ts`), read in React with `useStore` |
 | `@fontsource/pixelify-sans` | 5 | Pixel font for the overlay, weights 400 and 600, imported in `ui/GameUI.tsx` |
@@ -20,7 +20,7 @@ There is no router, CSS framework, state library other than zustand, or R3F help
 | Package | Version | Used for |
 |---|---|---|
 | `vite` + `@vitejs/plugin-react` | 8 + 6 | Dev server, HMR, production build |
-| `typescript` | 6.0 | Type checking (`tsc -b`). TypeScript 6 enables `strict` by default, so the tsconfigs don't set it |
+| `typescript` | 6.0 | Type checking (`tsc -p tsconfig.json` in each project). TypeScript 6 enables `strict` by default, so the tsconfigs don't set it |
 | `vitest` | 4 | Unit tests in a node environment |
 | `oxlint` | 1 | Linting |
 | `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | — | Types |
@@ -38,34 +38,61 @@ The package manager is yarn 4, pinned in the `packageManager` field of `package.
 
 Yarn 4 defaults that matter here: dependency install scripts do not run (no dependency of this repo has one), an install that must not change the lockfile is `yarn install --immutable`, and `yarn global` does not exist (install global tools with `npm i -g`). Yarn 4 ignores `.npmrc` and `.yarnrc`. Its own files go in `.yarn/`, which `.gitignore` excludes.
 
+## Workspaces and Nx
+
+The repo is a yarn workspace (`"workspaces": ["packages/*", "games/*"]` in the root `package.json`) managed with [Nx](https://nx.dev) (`nx` 23, a root dev dependency):
+
+| Workspace | Folder | What it is |
+|---|---|---|
+| `shoebox-theatre-workspace` | `/` | The private root: workspaces, root scripts and the shared dev tools (`nx`, `oxlint`, `typescript`, `vitest`, `@types/node`) |
+| `shoeboxtheatre` | `packages/engine` | The engine package. Dependencies: `zustand`, `@fontsource/pixelify-sans`. Peer dependencies (also dev dependencies, for its own tests and type check): `react`, `react-dom`, `three`, `@react-three/fiber`, `@react-three/postprocessing`, `postprocessing`. Dev dependencies: `vite`, `@types/react`, `@types/react-dom`, `@types/three`. |
+| `mossvale` | `games/mossvale` | The demo game (private). Dependencies: `"shoeboxtheatre": "workspace:^"` and the engine's peer packages. Dev dependencies: `vite`, `@vitejs/plugin-react` and the same type packages. |
+
+- Each workspace that uses `@react-three/fiber` provides `@types/react` and `@types/three`, and each workspace with a Vite config provides `vite`, because those packages ask for them as peers. Yarn hoists one copy of each package to the root `node_modules`.
+- Nx needs no plugins. It turns each workspace's `package.json` `scripts` into targets. `nx.json` sets caching and inputs: `build`, `typecheck` and `test` are cached, and a game's cache depends on the engine source (`^production`), because games use that source directly ([architecture.md](architecture.md#workspaces-and-the-source-condition)).
+- Nx Cloud is not used, and the Nx daemon is not needed. The cache lives in `.nx/`, which `.gitignore` excludes. Yarn 4 does not run the `nx` package's install script, and Nx works without it.
+
 ## Scripts
+
+Root scripts (run them from the repo root):
 
 | Command | What it does |
 |---|---|
-| `yarn dev` | Vite dev server on http://localhost:5173. The demo turns on `debug`, so the runtime is `window.__shoebox` (see [testing.md](testing.md)) |
-| `yarn test` | `vitest run`: all `src/**/*.test.ts` files once, in node |
-| `yarn build` | `tsc -b && vite build`: type-checks both tsconfig projects, then bundles into `dist/` |
+| `yarn dev` | `nx run mossvale:dev`: the Vite dev server for Mossvale on http://localhost:5173. The demo turns on `debug`, so the runtime is `window.__shoebox` (see [testing.md](testing.md)) |
+| `yarn test` | `nx run-many -t test`: `vitest run` in every project |
+| `yarn build` | `nx run-many -t typecheck build`: `tsc -p tsconfig.json` in every project, then each project's `build`. Mossvale builds into `games/mossvale/dist/`. |
 | `yarn lint` | `oxlint` over the repo |
-| `yarn preview` | Serves `dist/` |
+| `yarn preview` | `nx run mossvale:preview`: serves `games/mossvale/dist/` |
 
-`yarn build` prints a Vite advisory that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
+Project scripts (run one with `yarn nx run <project>:<target>`):
+
+| Project | Targets |
+|---|---|
+| `shoeboxtheatre` | `typecheck` (`tsc -p tsconfig.json`), `test` (`vitest run`) |
+| `mossvale` | `dev` (`vite`), `build` (`vite build`), `preview` (`vite preview`), `typecheck` (`tsc -p tsconfig.json`), `test` (`vitest run`) |
+
+Mossvale's build prints a Vite advisory that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped, mostly three.js and postprocessing). The build still succeeds; see [known-issues.md](known-issues.md).
 
 ## Config files
 
-- **`tsconfig.json`**: a solution file that references `tsconfig.app.json` and `tsconfig.node.json`. `tsc -b` builds both.
-- **`tsconfig.app.json`** covers `src/`:
-  - `target`/`lib` ES2023 plus DOM, `module: esnext`, `moduleResolution: bundler`, `jsx: react-jsx`, `types: ["vite/client"]` (provides `import.meta.env`).
-  - `noEmit`, `allowImportingTsExtensions` (so `import App from './App.tsx'` works), `allowArbitraryExtensions`, `skipLibCheck`, `moduleDetection: force`.
+- **`tsconfig.base.json`** holds the shared compiler options, which each project's `tsconfig.json` extends:
+  - `target`/`lib` ES2023 plus DOM, `module: esnext`, `moduleResolution: bundler`, `jsx: react-jsx`, `noEmit`, `allowArbitraryExtensions`, `skipLibCheck`, `moduleDetection: force`.
+  - `customConditions: ["@shoeboxtheatre/source"]`, so type checks resolve `shoeboxtheatre` to the engine source.
   - `verbatimModuleSyntax`: type-only imports must be written `import type { X }` or `import { type X }`.
   - `erasableSyntaxOnly`: no `enum`, no `namespace`, no constructor parameter properties. Use union types, `as const` objects and explicit fields.
-  - `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`: unused code fails the build.
-- **`tsconfig.node.json`** type-checks `vite.config.ts` only (node types, `module: nodenext`).
-- **`vite.config.ts`**: the React plugin plus a Vitest block, `test: { environment: 'node', include: ['src/**/*.test.ts'] }`, typed through `/// <reference types="vitest/config" />`.
+  - `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`: unused code fails the type check.
+- **`packages/engine/tsconfig.json`** covers `src` and `vite.config.ts`, with `types: ["vite/client"]`. TypeScript 6 checks side-effect imports, and the Vite client types declare the engine's CSS imports.
+- **`games/mossvale/tsconfig.json`** covers `src` and `vite.config.ts`, with `types: ["vite/client", "node"]` and `allowImportingTsExtensions` (so `import App from './App.tsx'` works).
+- **`packages/engine/vite.config.ts`**: only a Vitest block, `test: { environment: 'node', include: ['src/**/*.test.ts'] }`.
+- **`games/mossvale/vite.config.ts`**: the React plugin, the `@shoeboxtheatre/source` condition first in `resolve.conditions` and `ssr.resolve.conditions`, and the same Vitest block. Both Vite configs are typed through `/// <reference types="vitest/config" />`.
+- **`nx.json`**: named inputs and target defaults (see above).
 - **`.oxlintrc.json`**: the `react`, `typescript` and `oxc` plugins. `react/rules-of-hooks` is an error, and `react/only-export-components` is a warning with `allowConstantExport`.
-- **`index.html`**: title "Mossvale: a Shoebox Theatre demo", an inline `html,body,#root{margin:0;height:100%;background:#000}` style, and the `/src/main.tsx` module entry.
-- **`.gitignore`**: the Vite scaffold defaults (`node_modules`, `dist`, `*.local`, logs, editor folders). The agent scratch folders `.agent-files/` and `.agent-tmp/` are excluded per machine (in `.git/info/exclude`), not by `.gitignore`.
+- **`games/mossvale/index.html`**: title "Mossvale: a Shoebox Theatre demo", an inline `html,body,#root{margin:0;height:100%;background:#000}` style, and the `/src/main.tsx` module entry.
+- **`.gitignore`**: the Vite scaffold defaults (`node_modules`, `dist`, `*.local`, logs, editor folders), the yarn 4 files and the Nx cache. The agent scratch folders `.agent-files/` and `.agent-tmp/` are excluded per machine (in `.git/info/exclude`), not by `.gitignore`.
 
 ## Deployment
+
+**Do not deploy the monorepo yet.** The buildpacks still run the root `yarn run build`, which writes `games/mossvale/dist/`, while nginx serves the root `dist/`. A deploy would fail or serve nothing. The monorepo deploy setup is not in place yet.
 
 The game deploys to Dokku as a static site. The server builds it from source on every push; `dist/` is not committed. Three files at the repo root control the build, and there is no `Procfile`:
 

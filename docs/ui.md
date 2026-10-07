@@ -1,6 +1,6 @@
 # UI overlay
 
-The UI is plain React DOM over the canvas, in `src/engine/ui/`. It holds no game logic: every component reads the zustand UI store through `useUI(selector)` and renders. Engine code (the runtime and the `DialogueController`) writes the store; the UI never writes it. The store's shape is in [architecture.md](architecture.md#runtime-state-vs-ui-state).
+The UI is plain React DOM over the canvas, in `packages/engine/src/ui/`. It holds no game logic: every component reads the zustand UI store through `useUI(selector)` and renders. Engine code (the runtime and the `DialogueController`) writes the store; the UI never writes it. The store's shape is in [architecture.md](architecture.md#runtime-state-vs-ui-state).
 
 ## Structure
 
@@ -42,7 +42,7 @@ The UI is plain React DOM over the canvas, in `src/engine/ui/`. It holds no game
 
 1. Add the state it needs to `UIState` in `core/uiStore.ts`, with an initial value in `createUIStore()`.
 2. Write it from the runtime, or from a controller the runtime calls, with `runtime.ui.setState(...)`. Keep per-frame data out of the store: it triggers React renders.
-3. Add a small component in `src/engine/ui/` that reads the state with `useUI(selector)`, and render it from `GameUI`.
+3. Add a small component in `packages/engine/src/ui/` that reads the state with `useUI(selector)`, and render it from `GameUI`.
 4. Style it in `ui.css` with `shoebox-` classes, reusing `.shoebox-panel` for boxed UI.
 5. Input for the element goes through `Input`, not DOM listeners. The overlay has `pointer-events: none`, and the game is keyboard/gamepad-driven.
 6. Update this doc and [architecture.md](architecture.md) (the `UIState` table).

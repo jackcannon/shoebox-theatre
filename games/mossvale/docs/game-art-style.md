@@ -1,6 +1,6 @@
 # Mossvale character art style
 
-This is the look of the Mossvale demo's characters, and the rules for keeping new ones consistent with it. The characters are data in `src/game/characterModels.ts`. The engine's model renderer turns each one into a sprite sheet when the game loads. How that renderer works, and every option it takes, is engine documentation in [character-models.md](character-models.md). This doc covers only what Mossvale does with it.
+This is the look of the Mossvale demo's characters, and the rules for keeping new ones consistent with it. The characters are data in `games/mossvale/src/characterModels.ts`. The engine's model renderer turns each one into a sprite sheet when the game loads. How that renderer works, and every option it takes, is engine documentation in [character-models.md](../../../docs/character-models.md). This doc covers only what Mossvale does with it.
 
 ## The look
 
@@ -39,8 +39,8 @@ Which map character uses which sheet is in [game-content.md](game-content.md#cha
 
 ## Rules for new characters
 
-- Add an entry to `characterModels` in `src/game/characterModels.ts`. `characters.ts` turns every entry into a sheet with `characterModelSheet`.
-- Reuse the existing hair styles and outfits, and tell characters apart by colour. Add a new hair style or outfit to the engine only when no existing one can make the character read differently ([character-models.md](character-models.md#adding-a-hair-style-or-outfit)).
+- Add an entry to `characterModels` in `games/mossvale/src/characterModels.ts`. `characters.ts` turns every entry into a sheet with `characterModelSheet`.
+- Reuse the existing hair styles and outfits, and tell characters apart by colour. Add a new hair style or outfit to the engine only when no existing one can make the character read differently ([character-models.md](../../../docs/character-models.md#adding-a-hair-style-or-outfit)).
 - Keep the hero's red cap and spiky hair unique to the player, so they're easy to pick out in a crowd.
 - Choose mid-saturation colours with clear value contrast between hair, top, bottom and shoes. Neighbouring parts of similar value merge once they're shaded and inked. Shoes are dark.
 - Skin tones sit between `#d9a47a` and `#f2c9a0` in the current cast.

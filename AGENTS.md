@@ -32,18 +32,19 @@ Rules for AI agents working in this repo. This file covers **how to behave**. Ho
 - **Keep it simple.** Write the minimum code that solves the task: no speculative features, options, abstractions or error handling for cases that can't happen.
 - **Make surgical changes.** Touch only what the task needs. Match the surrounding style. Don't refactor, rename or reformat code next to your change. Remove only the dead code your own change creates, and mention other dead code instead of deleting it.
 - **Set a goal you can verify.** Before starting, decide how you'll prove the change works: a unit test, a type check, a screenshot or a value read from `window.__shoebox`. Iterate until it passes.
-- **Content or engine?** Game-specific data belongs in `src/game`. `src/engine` must stay game-agnostic: no Mossvale names, maps or story in engine code. See [docs/extending.md](docs/extending.md).
+- **Content or engine?** Game-specific data belongs in `games/mossvale/src`. `packages/engine/src` must stay game-agnostic: no Mossvale names, maps or story in engine code. See [docs/extending.md](docs/extending.md).
 
 ## 4. Architecture rules (don't break these)
 
 The full reasoning is in [docs/architecture.md](docs/architecture.md).
 
-- `src/game` imports the engine only through `src/engine/index.ts`. The one exception is `src/game/maps/maps.test.ts`. `src/engine` never imports `src/game`.
+- The repo is an Nx monorepo with yarn workspaces: the engine package `shoeboxtheatre` in `packages/engine`, and one workspace for each game in `games/<game>` (`games/mossvale` is the demo).
+- Games import the engine only as `shoeboxtheatre`, which resolves to what `packages/engine/src/index.ts` exports. The package `exports` field blocks deep imports. The engine never imports a game, and a game never imports another game.
 - `world/`, `scripting/`, `math.ts`, `core/Input.ts` and `render/camera.ts` stay free of three.js and React so they keep running in node tests.
 - **Nothing per-frame goes through React.** Per-frame state lives on `GameRuntime`, `World` and `Character`, and in refs, and is read and written in `useFrame`. The zustand UI store is for UI only and changes on events, never every frame.
 - Frame order comes from `useFrame` priorities: `GameLoop` −2, `FollowCamera` −1, everything else 0, `EffectComposer` 1. Code that depends on ordering needs an explicit priority.
 - Units are 1 tile = 1 world unit and 16 texture pixels per unit. A map's `y` is world `z`, and north is −z. Keep new art at whole-pixel sizes.
-- Anything game code needs is exported from `src/engine/index.ts` deliberately. Adding to or changing the public API means updating the API table in `docs/architecture.md`, and `README.md` if users see it.
+- Anything game code needs is exported from `packages/engine/src/index.ts` deliberately. Adding to or changing the public API means updating the API table in `docs/architecture.md`, and `README.md` if users see it.
 - Dispose every three.js geometry, material and texture you create outside the shared caches. `useGenerated()` keys must include every input that affects the output.
 - Generated art must be deterministic (`createRng`, `hashTile`). `Math.random()` is only acceptable for runtime-only effects such as particles and NPC AI timing.
 - The `GameConfig` passed to `<Shoebox>` must be a stable, module-level constant.
@@ -72,7 +73,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 
 ## 6. Verification before you say "done"
 
-- **Always run** `yarn test && yarn build && yarn lint`. `build` includes `tsc -b`, so it is the type check.
+- **Always run** `yarn test && yarn build && yarn lint`. `build` runs the `typecheck` target in every project first, so it is the type check.
   - All tests must pass, and the build must exit 0.
   - Lint must show 0 errors and no new warnings. The current count is in [docs/known-issues.md](docs/known-issues.md); update it if it changes.
 - **Tests:** add or update unit tests for any change to pure logic (world, collision, scripting, map data), then update the counts in [docs/testing.md](docs/testing.md).
@@ -89,7 +90,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
 ## 7. Commands and environment
 
 - On this machine, prefix the first node-based command in a session with `source ~/.nvm/nvm.sh &&`, so nvm is loaded. Node must be `^20.19.0 || >=22.12.0`.
-- Use the yarn scripts for project tasks: `yarn dev`, `yarn test`, `yarn build`, `yarn lint`. Use `bun` to run one-off `.ts` or `.js` scripts.
+- Use the root yarn scripts for project tasks: `yarn dev` (Mossvale), `yarn test`, `yarn build`, `yarn lint`. They run through Nx. For one project, use `yarn nx run <project>:<target>`, for example `yarn nx run mossvale:test`. Use `bun` to run one-off `.ts` or `.js` scripts.
 - The package manager is yarn 4, pinned by the `packageManager` field and run through corepack (`yarn.lock`, `.yarnrc.yml`). Use `yarn dlx` for one-off package binaries. Don't add, remove or upgrade dependencies without asking. If you do change them, update [docs/stack.md](docs/stack.md) and commit `yarn.lock`.
 - Never run `npm install` or `npm ci`. They create a `package-lock.json` and rewrite `yarn.lock`, and a second lockfile makes the Dokku build fail ([docs/stack.md](docs/stack.md#deployment)).
 - The dev server uses port 5173. Check it isn't already running (`lsof -nP -iTCP:5173 -sTCP:LISTEN`) before you start one. Reuse the one that's running, and don't kill a server you didn't start without a reason.

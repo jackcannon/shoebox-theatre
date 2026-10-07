@@ -1,6 +1,6 @@
 # World: tiles, movement, NPCs and events
 
-Everything in `src/engine/world/` is plain TypeScript with no three.js, React or DOM, and all of it is unit-tested in node. The runtime-side event handling (interaction, warps, triggers) lives in `core/GameRuntime.ts` and is described at the end.
+Everything in `packages/engine/src/world/` is plain TypeScript with no three.js, React or DOM, and all of it is unit-tested in node. The runtime-side event handling (interaction, warps, triggers) lives in `core/GameRuntime.ts` and is described at the end.
 
 ## Map definition
 

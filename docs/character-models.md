@@ -1,8 +1,8 @@
 # Character models: sprite sheets rendered from 3D
 
-`src/engine/sprites/` turns a small description of a character, a `CharacterModel`, into an 8-direction pixel-art walk sheet. It builds the character from signed-distance shapes, sphere-traces it with an orthographic camera, then shades and inks the result as pixel art. The rendering happens in code when the game preloads, like every other generated texture ([assets.md](assets.md)).
+`packages/engine/src/sprites/` turns a small description of a character, a `CharacterModel`, into an 8-direction pixel-art walk sheet. It builds the character from signed-distance shapes, sphere-traces it with an orthographic camera, then shades and inks the result as pixel art. The rendering happens in code when the game preloads, like every other generated texture ([assets.md](assets.md)).
 
-This doc covers the engine side: the API, the sheet format and the rendering pipeline. What a particular game's characters look like belongs to that game; for the Mossvale demo it's [game-art-style.md](game-art-style.md).
+This doc covers the engine side: the API, the sheet format and the rendering pipeline. What a particular game's characters look like belongs to that game; for the Mossvale demo it's [game-art-style.md](../games/mossvale/docs/game-art-style.md).
 
 ## Files
 
@@ -18,7 +18,7 @@ Everything except the `draw` callback in `characterModelSheet.ts` is free of thr
 
 ## API
 
-`characterModelSheet(model)` and the types `CharacterModel`, `CharacterModelPalette`, `HairStyle` and `Outfit` are exported from `src/engine/index.ts`.
+`characterModelSheet(model)` and the types `CharacterModel`, `CharacterModelPalette`, `HairStyle` and `Outfit` are exported from `packages/engine/src/index.ts`.
 
 ```ts
 interface CharacterModel {

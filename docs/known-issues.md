@@ -26,6 +26,8 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 
 ## Build and lint
 
+- **Dokku deploys are not set up for the monorepo.** The buildpacks run the root `yarn run build`, which builds into `games/mossvale/dist/`, but nginx serves the root `dist/` ([stack.md](stack.md#deployment)). Do not deploy until the build selects a game and copies its output.
+
 - **Bundle size.** Vite warns that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped). There is no code splitting yet.
 - **24 oxlint warnings, 0 errors.** Each was reviewed and none is a real bug; most flag normal R3F patterns:
   - `react(only-export-components)`: 6 in `render/decorations.tsx` and 3 in `prefabs/parts.tsx`. These files export helpers or non-component constants next to components, which only affects fast refresh.

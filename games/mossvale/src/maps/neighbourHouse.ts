@@ -1,4 +1,4 @@
-import { TILES, type MapDefinition } from '../../engine'
+import { TILES, type MapDefinition } from 'shoeboxtheatre'
 import { indoorWarm, interiorCamera } from './environments'
 
 export const neighbourHouse: MapDefinition = {

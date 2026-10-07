@@ -1,4 +1,4 @@
-import type { CharacterModel } from '../engine'
+import type { CharacterModel } from 'shoeboxtheatre'
 
 export const characterModels: Record<string, CharacterModel> = {
   hero: {

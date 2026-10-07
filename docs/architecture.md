@@ -1,15 +1,17 @@
 # Architecture
 
-The repo has two halves: a reusable engine (`src/engine`) and a demo game that is pure data plus scripts (`src/game`). `src/App.tsx` joins them by rendering `<Shoebox config={gameConfig} />`.
+The repo is an Nx monorepo with yarn workspaces. It has a reusable engine, the npm package `shoeboxtheatre` in `packages/engine`, and games in `games/`. The demo game, Mossvale (`games/mossvale`), is pure data plus scripts. Its `src/App.tsx` joins the two by rendering `<Shoebox config={gameConfig} debug={import.meta.env.DEV} />`.
 
 ## Folder map
 
 ```
-index.html                  mounts /src/main.tsx into #root
-src/
-  main.tsx                  createRoot + <StrictMode><App /></StrictMode>
-  App.tsx                   <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
-  engine/
+package.json                root workspace (private): workspaces, root scripts, shared dev tools
+nx.json                     Nx caching and inputs; targets come from each package.json "scripts"
+tsconfig.base.json          shared compiler options, including the @shoeboxtheatre/source condition
+packages/engine/            the engine package "shoeboxtheatre"
+  package.json              exports, dependencies, peer dependencies, scripts
+  vite.config.ts            Vitest settings only
+  src/
     index.ts                public API; game code imports only from here
     Shoebox.tsx             creates the GameRuntime, renders <GameCanvas> and <GameUI>
     types.ts                every public data type (GameConfig, MapDefinition, TileType, MapObject, ...)
@@ -54,21 +56,36 @@ src/
       parts.tsx             prop, propNumbers, useGenerated, Box
       prefabTextures.ts     canvas painters for facades, roofs, furniture
     ui/                     DOM overlay (GameUI and its parts, ui.css)
-  game/
+games/mossvale/             the demo game, workspace "mossvale" (private)
+  package.json              depends on "shoeboxtheatre": "workspace:^"
+  index.html                mounts /src/main.tsx into #root
+  vite.config.ts            React plugin, the source condition, Vitest settings
+  public/favicon.svg
+  docs/                     game-content.md, game-art-style.md
+  src/
+    main.tsx                createRoot + <StrictMode><App /></StrictMode>
+    App.tsx                 <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
     config.ts               gameConfig
     characterModels.ts      a CharacterModel per character
     characters.ts           characterModelSheet for each model
     maps/                   town, playerHouse1F, playerHouse2F, neighbourHouse, lab, environments
 ```
 
-Each subsystem has its own doc: [world.md](world.md), [scripting.md](scripting.md), [rendering.md](rendering.md), [assets.md](assets.md), [character-models.md](character-models.md), [prefabs.md](prefabs.md), [ui.md](ui.md). The demo game is described in [game-content.md](game-content.md) and [game-art-style.md](game-art-style.md).
+## Workspaces and the source condition
+
+- Games depend on the engine with `"shoeboxtheatre": "workspace:^"`, so yarn links `node_modules/shoeboxtheatre` to `packages/engine`.
+- The engine `package.json` `exports` field has a custom condition first: `"@shoeboxtheatre/source": "./src/index.ts"`. Each game's `vite.config.ts` puts that condition first in `resolve.conditions` (browser) and `ssr.resolve.conditions` (Vitest in node), and `tsconfig.base.json` sets it in `customConditions`. So games, their tests and their type checks use the engine's TypeScript source directly. An engine edit hot-reloads in the running game, and a game build does not need an engine build.
+- Without the condition, the same `exports` field points to the built `dist/`.
+- Package boundaries do the work of lint rules: `exports` allows only `shoeboxtheatre` (no deep imports), the engine has no dependency on any game, and a game can import another game only if it declares it as a dependency.
+
+Each subsystem has its own doc: [world.md](world.md), [scripting.md](scripting.md), [rendering.md](rendering.md), [assets.md](assets.md), [character-models.md](character-models.md), [prefabs.md](prefabs.md), [ui.md](ui.md). The demo game is described in [game-content.md](../games/mossvale/docs/game-content.md) and [game-art-style.md](../games/mossvale/docs/game-art-style.md).
 
 ## Dependency rules
 
 These hold today. Keep them.
 
-- **`src/game` imports only from `src/engine` through its index** (`'../engine'` or `'../../engine'`). The one exception is `src/game/maps/maps.test.ts`, which imports `engine/world/World` to check map integrity.
-- **The engine never imports from `src/game`.** Everything game-specific arrives through `GameConfig`.
+- **Games import the engine only as `shoeboxtheatre`.** That is everything `packages/engine/src/index.ts` exports, including `World` for map tests (`games/mossvale/src/maps/maps.test.ts`).
+- **The engine never imports from a game.** Everything game-specific arrives through `GameConfig`.
 - **`sprites/` imports no external libraries.** From the rest of the engine it imports only `assets/pixel.ts` and the `SpriteSheetDefinition` type, so the model renderer runs in node tests. The DOM is touched only inside the `draw` callback that `characterModelSheet` returns.
 - **`world/`, `scripting/`, `math.ts`, `core/Input.ts` and `render/camera.ts` import no external libraries.** They are plain TypeScript and run in node, which is why the world and scripting code is unit-tested there. Don't pull three.js or React into them. The only browser APIs used are in `Input`: the `Window` passed to `attach()` and the key events it delivers, and `navigator.getGamepads`, which is guarded with `typeof navigator`. Constructing an `Input` works in node.
 - `types.ts` imports only the `ComponentType` type from React, plus engine types.
@@ -169,7 +186,7 @@ Everything content-specific comes in through `GameConfig` (`types.ts`):
 
 Recipes are in [extending.md](extending.md).
 
-## Public API (`src/engine/index.ts`)
+## Public API (`packages/engine/src/index.ts`)
 
 | Export | Kind | From |
 |---|---|---|
@@ -186,5 +203,6 @@ Recipes are in [extending.md](extending.md).
 | `applyWind` | function | `render/wind.ts` |
 | `ScriptContext`, `CharacterHandle` | types | `scripting/ScriptContext.ts` |
 | `TILES`, `DEFAULT_SURFACES` | values | `world/surfaces.ts` |
+| `World` | class | `world/World.ts` |
 
 Not exported (internal): `useUI`, `AssetManager` as a value, `World`, `Character`, `TileMap`, `DEFAULT_PREFABS`, `DEFAULT_DECORATIONS`, `BUILTIN_TEXTURES`, the noise and dither helpers, the prefab texture painters, and the model renderer's internals (`buildModel`, `renderCharacterSheet`, the SDF helpers). Game code that needs one of these should get it added to the index deliberately.

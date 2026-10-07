@@ -70,7 +70,7 @@ Flags live only in memory. There is no save/load yet ([known-issues.md](known-is
 
 ## Example
 
-This is Mom's script from `src/game/maps/playerHouse1F.ts`:
+This is Mom's script from `games/mossvale/src/maps/playerHouse1F.ts`:
 
 ```ts
 interact: async (ctx) => {

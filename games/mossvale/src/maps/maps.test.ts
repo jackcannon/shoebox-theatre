@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { World } from 'shoeboxtheatre'
 
-import { World } from '../../engine/world/World'
 import { gameConfig } from '../config'
 
 const { maps, player } = gameConfig

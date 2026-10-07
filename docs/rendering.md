@@ -1,6 +1,6 @@
 # Rendering: the 3D scene
 
-Everything in `src/engine/render/` is react-three-fiber. The engine's look comes from these pieces:
+Everything in `packages/engine/src/render/` is react-three-fiber. The engine's look comes from these pieces:
 
 - upright pixel sprites that cast real shadows, in a lit, low-poly 3D diorama
 - a fixed-pitch follow camera

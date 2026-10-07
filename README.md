@@ -18,12 +18,14 @@ Requires Node 20.19+ or 22.12+ (Vite 8). The repo pins its yarn version (yarn 4)
 
 ```bash
 yarn install
-yarn dev       # http://localhost:5173
-yarn test      # vitest unit tests
-yarn build     # type-check (tsc -b) and production build into dist/
+yarn dev       # Mossvale on http://localhost:5173
+yarn test      # vitest unit tests in every project
+yarn build     # type-check and build every project (Mossvale into games/mossvale/dist/)
 yarn lint      # oxlint
-yarn preview   # serve the production build
+yarn preview   # serve Mossvale's production build
 ```
+
+The root scripts run through [Nx](https://nx.dev). To work on one project, run `yarn nx run <project>:<target>`, for example `yarn nx run mossvale:test` or `yarn nx run shoeboxtheatre:typecheck`.
 
 `yarn build` prints a Vite advisory that the single JS chunk is larger than 500 kB. Most of it is three.js and postprocessing; the build still succeeds.
 
@@ -47,31 +49,35 @@ Confirm or back while text is still typing shows the whole page at once.
 
 ## Architecture
 
+The repo is an Nx monorepo with yarn workspaces: the engine package `shoeboxtheatre` in `packages/engine`, and games in `games/`. Games import the engine as `shoeboxtheatre`. Inside the monorepo, that name resolves to the engine's TypeScript source, so engine changes show in the game at once. See [docs/architecture.md](docs/architecture.md).
+
 ```
-src/
-  main.tsx, App.tsx     mounts <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
-  engine/
-    index.ts            public API: game code imports only from here
-    Shoebox.tsx         creates the GameRuntime, the 3D canvas and the UI overlay
-    types.ts            every public type (GameConfig, MapDefinition, TileType, MapObject, ...)
-    math.ts             directions, seeded RNG, tile hash, damp, wait
-    assets/             AssetManager, PixelCanvas and colour helpers, built-in textures, pixel-grid character generator
-    sprites/            character sprite sheets sphere-traced from 3D models (characterModelSheet)
-    core/               GameRuntime, Input (keyboard + gamepad), the zustand UI store, React context hooks
-    world/              TileMap, World (movement, NPC AI, interaction), Character, collision, surfaces and TILES, terrain geometry
-    scripting/          ScriptContext, DialogueController (typewriter and choices), Flags
-    render/             the R3F scene: GameCanvas, MapScene, Terrain, Water, decorations, CharacterSprite,
-                        Lighting, Particles, FollowCamera and camera maths, PostEffects, wind
-    prefabs/            3D props placed as map objects (buildings, signs, lamps, furniture) and helpers for writing them
-    ui/                 DOM overlay: dialogue box, choice box, location banner, fade, loading screen, controls hint, ui.css
-  game/
+packages/engine/src/    the engine package "shoeboxtheatre"
+  index.ts            public API: game code imports only from here
+  Shoebox.tsx         creates the GameRuntime, the 3D canvas and the UI overlay
+  types.ts            every public type (GameConfig, MapDefinition, TileType, MapObject, ...)
+  math.ts             directions, seeded RNG, tile hash, damp, wait
+  assets/             AssetManager, PixelCanvas and colour helpers, built-in textures, pixel-grid character generator
+  sprites/            character sprite sheets sphere-traced from 3D models (characterModelSheet)
+  core/               GameRuntime, Input (keyboard + gamepad), the zustand UI store, React context hooks
+  world/              TileMap, World (movement, NPC AI, interaction), Character, collision, surfaces and TILES, terrain geometry
+  scripting/          ScriptContext, DialogueController (typewriter and choices), Flags
+  render/             the R3F scene: GameCanvas, MapScene, Terrain, Water, decorations, CharacterSprite,
+                      Lighting, Particles, FollowCamera and camera maths, PostEffects, wind
+  prefabs/            3D props placed as map objects (buildings, signs, lamps, furniture) and helpers for writing them
+  ui/                 DOM overlay: dialogue box, choice box, location banner, fade, loading screen, controls hint, ui.css
+games/mossvale/        the demo game
+  index.html, public/
+  docs/                 game-content.md, game-art-style.md
+  src/
+    main.tsx, App.tsx   mounts <Shoebox config={gameConfig} debug={import.meta.env.DEV} />
     config.ts           gameConfig: title, start position, player, maps, characters
     characterModels.ts  a CharacterModel for every character
     characters.ts       a characterModelSheet for each model
     maps/               town, playerHouse1F, playerHouse2F, neighbourHouse, lab, shared environments
 ```
 
-The public API (`src/engine/index.ts`) exports `Shoebox`, `characterModelSheet`, `generatedCharacter`, `TILES`, `DEFAULT_SURFACES`, `PIXELS_PER_UNIT`, `PixelCanvas`, `shade`, `mixColor`, the prefab helpers `prop`, `propNumbers`, `useGenerated` and `Box`, plus `useRuntime` and `applyWind`. It also exports every type in `types.ts`, and the `CharacterModel`, `CharacterModelPalette`, `HairStyle`, `Outfit`, `CharacterLook`, `CharacterPalette`, `TextureSource`, `SpriteSheetDefinition`, `ScriptContext`, `CharacterHandle` and `GameRuntime` types.
+The public API (`packages/engine/src/index.ts`) exports `Shoebox`, `World`, `characterModelSheet`, `generatedCharacter`, `TILES`, `DEFAULT_SURFACES`, `PIXELS_PER_UNIT`, `PixelCanvas`, `shade`, `mixColor`, the prefab helpers `prop`, `propNumbers`, `useGenerated` and `Box`, plus `useRuntime` and `applyWind`. It also exports every type in `types.ts`, and the `CharacterModel`, `CharacterModelPalette`, `HairStyle`, `Outfit`, `CharacterLook`, `CharacterPalette`, `TextureSource`, `SpriteSheetDefinition`, `ScriptContext`, `CharacterHandle` and `GameRuntime` types.
 
 ### One frame
 
@@ -169,8 +175,9 @@ export const characters = {
 Game content is data plus a few components, all registered in the `GameConfig`. The engine merges `textures`, `surfaces`, `decorations` and `prefabs` over its built-ins by id, so a new id adds an entry and an existing id replaces the built-in. Here is the demo config with every example from this section registered:
 
 ```ts
-// src/game/config.ts
-import type { GameConfig } from '../engine'
+// games/mossvale/src/config.ts
+import type { GameConfig } from 'shoeboxtheatre'
+
 import { lab } from './maps/lab'
 import { meadow } from './maps/meadow'
 import { neighbourHouse } from './maps/neighbourHouse'
@@ -196,15 +203,15 @@ export const gameConfig: GameConfig = {
 }
 ```
 
-`src/game/maps/maps.test.ts` checks every map in `gameConfig`, including new ones. It checks that rows have equal widths, that warps start on walkable tiles and land on walkable tiles of existing maps, and that NPCs stand on walkable tiles. Run `yarn test` after adding a map.
+`games/mossvale/src/maps/maps.test.ts` checks every map in `gameConfig`, including new ones. It checks that rows have equal widths, that warps start on walkable tiles and land on walkable tiles of existing maps, and that NPCs stand on walkable tiles. Run `yarn test` after adding a map.
 
 ### Add a map
 
 A map is an ASCII layout, a palette that says what each character means, and lists of objects, NPCs, warps and triggers, plus lighting and camera settings. Spread the `TILES` presets into the palette and override fields as needed.
 
 ```ts
-// src/game/maps/meadow.ts
-import { TILES, type MapDefinition } from '../../engine'
+// games/mossvale/src/maps/meadow.ts
+import { TILES, type MapDefinition } from 'shoeboxtheatre'
 import { outdoorDay } from './environments'
 
 export const meadow: MapDefinition = {
@@ -344,8 +351,8 @@ Scripts are async functions that receive a `ScriptContext`:
 A tile type is a palette entry: `ground` and `side` (surface ids, or `'none'` to skip that face), `height`, `solid`, `decoration`, and `water` (draws the animated water surface over the tile). A new look for the ground needs a texture and a surface. Paint the texture with `PixelCanvas`, which wraps by default so the texture tiles seamlessly:
 
 ```ts
-// src/game/textures.ts
-import { PixelCanvas, shade } from '../engine'
+// games/mossvale/src/textures.ts
+import { PixelCanvas, shade } from 'shoeboxtheatre'
 
 export function drawCobbles(): HTMLCanvasElement {
   const p = new PixelCanvas(32, 32)
@@ -372,8 +379,8 @@ Register `textures: { cobble: { draw: drawCobbles } }` and `surfaces: { cobble: 
 Decorations are repeated scenery attached to tile types, such as trees, flowers and fences. A decoration component receives every tile with its id on the map and in the border (`inMap` is false for border tiles) in one `instances` array. Each instance has the tile's `x`, `z`, ground height `y` and a stable random `seed`.
 
 ```tsx
-// src/game/decorations.tsx
-import type { DecorationComponent } from '../engine'
+// games/mossvale/src/decorations.tsx
+import type { DecorationComponent } from 'shoeboxtheatre'
 
 export const Rocks: DecorationComponent = ({ instances }) => (
   <>
@@ -401,8 +408,8 @@ Register `decorations: { rock: Rocks }` and use it in a palette: `r: { ...TILES.
 A prefab is a React component that receives `{ object, w, d }` and draws in the footprint's local space: `[0..w] × [0..d]` on the ground, with the front at `z = d`. Read settings with `prop(object, key, fallback)` (the fallback sets the type) or `propNumbers(object, key)`.
 
 ```tsx
-// src/game/prefabs.tsx
-import { Box, prop, useRuntime, type PrefabProps } from '../engine'
+// games/mossvale/src/prefabs.tsx
+import { Box, prop, useRuntime, type PrefabProps } from 'shoeboxtheatre'
 
 export function Well({ object, w, d }: PrefabProps) {
   const stone = useRuntime().assets.texture('stone')
@@ -430,7 +437,7 @@ Register `prefabs: { well: Well }` and place it like any object:
 - For art that depends on props, paint it with `useGenerated(key, draw)`, where the key includes every parameter, for example `` `plaque:${color}` ``.
 - For different textures per face, use a `<mesh>` with one `meshStandardMaterial` per face (`attach="material-0"` to `"material-5"`). The face order is +x, −x, +y, −y, +z (front), −z.
 - Glowing parts need `emissiveIntensity` above 1 to reach the bloom threshold (0.85).
-- Animate in `useFrame` with `useRuntime().time`. See `src/engine/prefabs/` for 18 worked examples.
+- Animate in `useFrame` with `useRuntime().time`. See `packages/engine/src/prefabs/` for 18 worked examples.
 
 ### Use a PNG texture or sprite sheet
 
@@ -468,7 +475,7 @@ camera: { fov: 28, pitch: 35, distance: 20 },
 - `sun` is the only shadow-casting light. `direction` points from the scene towards the sun, and the shadow camera is fitted to the whole map and border automatically.
 - `lights` are point lights (default colour `#ffcf8a`, intensity 12, distance 8). They are physically based, so intensities of about 6–12 read well. `flicker: true` makes them waver like a flame.
 - `particles { count, color, size }` adds drifting motes around the player: pollen outdoors, dust indoors.
-- `postfx` defaults are bloom 0.55, tiltShift 0.12 (blur strength; the focus line follows the player), vignette 0.55 and saturation 0 (range −1 to 1). Fixed values such as the bloom threshold, the tilt-shift taper and the ACES tone mapping live in `src/engine/render/PostEffects.tsx`.
+- `postfx` defaults are bloom 0.55, tiltShift 0.12 (blur strength; the focus line follows the player), vignette 0.55 and saturation 0 (range −1 to 1). Fixed values such as the bloom threshold, the tilt-shift taper and the ACES tone mapping live in `packages/engine/src/render/PostEffects.tsx`.
 - `camera` defaults to fov 30, pitch 40 (degrees below the horizon) and distance 18 (`DEFAULT_CAMERA` in `render/camera.ts`). The sprite stretch follows the pitch automatically. The camera is clamped to keep the view inside the map and its border, and it centres maps that are smaller than the view.
 
 ### Ideas for next features
@@ -483,7 +490,7 @@ camera: { fov: 28, pitch: 35, distance: 20 },
 
 ## Testing and debugging
 
-`yarn test` runs vitest in a node environment on `src/**/*.test.ts`. There are 55 tests in 8 files, covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, the character model sheets, and the integrity of every map.
+`yarn test` runs vitest in a node environment on each project's `src/**/*.test.ts`. There are 55 tests in 8 files (33 in the engine, 22 in Mossvale), covering collision, the tile map, world movement and interaction, the dialogue controller, the character parts, the character model sheets, and the integrity of every map.
 
 With the `debug` prop on, `Shoebox` exposes the runtime as `window.__shoebox` for the browser console. The demo turns it on in `yarn dev` (`debug={import.meta.env.DEV}`). For example:
 
@@ -494,6 +501,8 @@ __shoebox.flags.set('metMom')
 ```
 
 ## Deployment
+
+**Do not deploy the monorepo yet.** The Dokku build still runs the root `yarn build`, which writes `games/mossvale/dist/`, while nginx serves the root `dist/`. See [docs/stack.md](docs/stack.md#deployment).
 
 The game deploys to [Dokku](https://dokku.com) as a static site. Buildpacks install the dependencies with yarn 4, run `yarn build`, and serve `dist/` with nginx. The files involved:
 

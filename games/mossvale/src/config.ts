@@ -1,4 +1,5 @@
-import type { GameConfig } from '../engine'
+import type { GameConfig } from 'shoeboxtheatre'
+
 import { lab } from './maps/lab'
 import { neighbourHouse } from './maps/neighbourHouse'
 import { playerHouse1F } from './maps/playerHouse1F'

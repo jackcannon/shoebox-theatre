@@ -31,3 +31,7 @@ dist-ssr
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# Nx
+.nx/cache
+.nx/workspace-data

@@ -1,6 +1,6 @@
 # Game content: Mossvale Village
 
-`src/game/` is the demo game. It is data and scripts only, importing from `src/engine` through its index. All names, text and art are original. It must never contain names, text or assets from any commercial game, or any other copyrighted material.
+`games/mossvale/` is the demo game, the workspace `mossvale`. Its `src/` is data and scripts only, and it imports the engine as `shoeboxtheatre`. The file paths below are relative to `games/mossvale/src/`. All names, text and art are original. It must never contain names, text or assets from any commercial game, or any other copyrighted material.
 
 ## Files
 
@@ -12,13 +12,13 @@
 | `maps/environments.ts` | Shared `outdoorDay` and `indoorWarm` environments, and `interiorCamera` |
 | `maps/town.ts` | `town` |
 | `maps/playerHouse1F.ts`, `maps/playerHouse2F.ts`, `maps/neighbourHouse.ts`, `maps/lab.ts` | The four interiors |
-| `maps/town.test.ts`, `maps/maps.test.ts` | Content tests ([testing.md](testing.md)) |
+| `maps/town.test.ts`, `maps/maps.test.ts` | Content tests ([testing.md](../../../docs/testing.md)) |
 
 `gameConfig` must stay a module-level constant: `Shoebox` recreates the runtime whenever the `config` object changes.
 
 ## Characters
 
-Every character sheet is rendered from a `CharacterModel` when the game loads ([character-models.md](character-models.md)). All of them have 24×32 frames at 21 px per tile, with 8 directions. Their look and palettes are described in [game-art-style.md](game-art-style.md).
+Every character sheet is rendered from a `CharacterModel` when the game loads ([character-models.md](../../../docs/character-models.md)). All of them have 24×32 frames at 21 px per tile, with 8 directions. Their look and palettes are described in [game-art-style.md](game-art-style.md).
 
 | Id | Hair | Outfit | Used by |
 |---|---|---|---|
