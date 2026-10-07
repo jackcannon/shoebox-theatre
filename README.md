@@ -511,6 +511,11 @@ yarn deploy:all   # deploy every game
 
 Each app sets `GAME` to its game folder, and the root `heroku-postbuild` script builds that game. See [docs/deployment.md](docs/deployment.md).
 
+## Make a game
+
+- **A small game in this monorepo:** run `yarn nx g ./tools/generators:game <name>`. It creates `games/<name>` with one map, a map test and a Dokku deploy target. See [docs/extending.md](docs/extending.md#add-a-game).
+- **A big game in its own repo:** install the engine from npm (below). [docs/extending.md](docs/extending.md#which-games-go-where) explains which games go where.
+
 ## Use the engine in your own game
 
 The engine is set up as the npm package `shoeboxtheatre`. No version is published yet; the first one will be `0.1.0`. A game outside this monorepo will install it with its peer dependencies:

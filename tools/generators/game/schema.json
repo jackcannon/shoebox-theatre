@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "ShoeboxTheatreGame",
+  "title": "Shoebox Theatre game",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Folder and workspace name, in kebab-case",
+      "$default": { "$source": "argv", "index": 0 },
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Game title for the page and the config (default: the name in title case)"
+    },
+    "app": {
+      "type": "string",
+      "description": "Dokku app name for the deploy target (default: the name)"
+    }
+  },
+  "required": ["name"]
+}

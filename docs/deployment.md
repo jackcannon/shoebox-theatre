@@ -65,6 +65,26 @@ Each game has a `deploy` target in the `nx` field of its `package.json`:
 | The root `package.json` or `yarn.lock` | Every game |
 | `docs/`, `README.md`, `.buildpacks`, `.dokku.env`, `.static` or `tools/` | None. Run `yarn deploy:all` after a change to the build files or scripts. |
 
+## Games in their own repos
+
+A game in its own repo is a normal single-app repo with the same 3 buildpacks. It has no `GAME` variable and no `heroku-postbuild` script:
+
+- `.buildpacks`: the same 3 buildpack URLs as this repo.
+- `.dokku.env`: `NGINX_ROOT='dist'`.
+- `.static`: an empty file.
+- `package.json`: `build` is `tsc -b && vite build` (or the same type check and build in another form), which writes `dist/`.
+
+The Node buildpack runs `yarn install --immutable` and `yarn run build`, and nginx serves `dist/`. Deploy with `git push --force <dokku remote> master`, after Jack creates the app (`ssh dokku@ssh.cannonbury.co.uk apps:create <app>`).
+
+The game installs a published `shoeboxtheatre` version. To try unreleased engine changes in it:
+
+1. In the game: `yarn link <path to this repo>/packages/engine`. This adds a `portal:` resolution to its `package.json`.
+2. In this repo: `yarn nx run shoeboxtheatre:build` once, then `yarn workspace shoeboxtheatre dev` (`tsc --watch`).
+3. Run the game's dev server.
+4. When the change is released, run `yarn unlink shoeboxtheatre` in the game, then `yarn up shoeboxtheatre`.
+
+Do not commit the `portal:` resolution. The Dokku build can't see a folder outside the repo, so the deploy fails.
+
 ## Setting up an app for a new game
 
 These commands run on the server. Jack runs them:

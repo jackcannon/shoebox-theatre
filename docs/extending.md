@@ -7,6 +7,57 @@ First decide whether the change is **content** (`games/<game>/src`, for the demo
 - If only this game needs it, it's content.
 - If any game built on the engine could use it, it's engine code. Engine code must not know about Mossvale or any other game. Export anything games need from `packages/engine/src/index.ts`.
 
+## Add a game
+
+### Which games go where
+
+| Put the game in this monorepo (`games/<game>`) when | Give the game its own repo when |
+|---|---|
+| It is small, like Mossvale | It needs a pinned engine version and its own release speed |
+| It can always use the latest engine source | It needs different people with access |
+| Its dependencies are small | It has large binary assets (art, audio, Git LFS) |
+| An engine change can fix it in the same commit | It adds large dependencies that slow every monorepo build |
+
+Size alone is not the reason; Nx handles big projects well. A game in its own repo installs a published `shoeboxtheatre` version ([releasing.md](releasing.md)) and deploys on its own ([deployment.md](deployment.md#games-in-their-own-repos)).
+
+### Add a game to this monorepo
+
+Run the local Nx generator in `tools/generators`:
+
+```bash
+yarn nx g ./tools/generators:game <name> --title="<Title>" --app=<dokku app>
+```
+
+- `<name>` is the folder and workspace name, in kebab-case. `--title` defaults to the name in title case, and `--app` defaults to the name.
+- It creates `games/<name>` and runs `yarn install`:
+  - `package.json`: the engine's peer packages and `"shoeboxtheatre": "workspace:^"` as dependencies, plus the dev tools. The versions come from `packages/engine/package.json` and the installed `@vitejs/plugin-react`. It also has the `dev`, `build`, `preview`, `typecheck` and `test` scripts and a `deploy` target for the Dokku app.
+  - `vite.config.ts`, `tsconfig.json` and `src/main.tsx`, `src/App.tsx`: copies of Mossvale's.
+  - `index.html` with the title.
+  - `src/config.ts` with a `hero` character, and `src/maps/start.ts`, a grass clearing ringed by trees.
+  - `src/maps/maps.test.ts`: the map integrity test.
+  - `docs/game-content.md`.
+- The generator code is `tools/generators/game/generator.cjs`, and its template files are in `tools/generators/game/files/` (EJS placeholders `<%= name %>`, `<%= title %>` and `<%= app %>`). Change the templates when Mossvale's shared files change.
+
+Then:
+
+1. Run `yarn nx run <name>:dev`. It also uses port 5173, so stop any other game's dev server first.
+2. Link the game's docs from `docs/README.md`.
+3. Ask Jack to create the Dokku app and set `GAME` ([deployment.md](deployment.md#setting-up-an-app-for-a-new-game)), then run `yarn deploy`.
+
+`yarn dev` always runs Mossvale. For another game, use `yarn nx run <name>:dev`.
+
+### Move a game out of the monorepo
+
+1. Clone the monorepo into a new folder.
+2. Keep only the game's history: `git filter-repo --subdirectory-filter games/<game>`. `git filter-repo` is one Python file: <https://github.com/newren/git-filter-repo>.
+3. Add the files a single-game repo needs: `.yarnrc.yml`, `.gitignore`, `.buildpacks`, `.dokku.env` (`NGINX_ROOT='dist'`), an empty `.static`, and an `AGENTS.md`.
+4. In `package.json`: change `"shoeboxtheatre": "workspace:^"` to the latest published range, remove the `nx` field, add the `packageManager` field, and add a `lint` script.
+5. In `tsconfig.json`, copy the options from `tsconfig.base.json` without `customConditions`. In `vite.config.ts`, remove the `@shoeboxtheatre/source` conditions. The published package does not include the engine source.
+6. Run `yarn install`, `yarn test`, `yarn build` and a browser check.
+7. Create the GitHub repo and push.
+8. Ask Jack to run `ssh dokku@ssh.cannonbury.co.uk config:unset --no-restart <app> GAME`, then deploy from the new repo.
+9. In the monorepo: delete `games/<game>`, update the docs and commit.
+
 ## Add a map
 
 1. Create `games/mossvale/src/maps/<id>.ts` exporting a `MapDefinition` whose `id` equals its key in `config.maps`.

@@ -1,0 +1,5 @@
+{
+  "name": "shoebox-theatre-generators",
+  "private": true,
+  "generators": "./generators.json"
+}

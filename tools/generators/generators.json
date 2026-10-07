@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "game": {
+      "factory": "./game/generator.cjs",
+      "schema": "./game/schema.json",
+      "description": "Create a Shoebox Theatre game workspace in games/<name>"
+    }
+  }
+}

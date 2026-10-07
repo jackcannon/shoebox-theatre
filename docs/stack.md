@@ -44,7 +44,7 @@ The repo is a yarn workspace (`"workspaces": ["packages/*", "games/*"]` in the r
 
 | Workspace | Folder | What it is |
 |---|---|---|
-| `shoebox-theatre-workspace` | `/` | The private root: workspaces, root scripts and the shared dev tools (`nx`, `oxlint`, `typescript`, `vitest`, `@types/node`) |
+| `shoebox-theatre-workspace` | `/` | The private root: workspaces, root scripts and the shared dev tools (`nx`, `@nx/devkit` for the game generator in `tools/generators`, `oxlint`, `typescript`, `vitest`, `@types/node`) |
 | `shoeboxtheatre` | `packages/engine` | The engine package. Dependencies: `zustand`, `@fontsource/pixelify-sans`. Peer dependencies (also dev dependencies, for its own tests and type check): `react`, `react-dom`, `three`, `@react-three/fiber`, `@react-three/postprocessing`, `postprocessing`. Dev dependencies: `vite`, `@types/react`, `@types/react-dom`, `@types/three`. |
 | `mossvale` | `games/mossvale` | The demo game (private). Dependencies: `"shoeboxtheatre": "workspace:^"` and the engine's peer packages. Dev dependencies: `vite`, `@vitejs/plugin-react` and the same type packages. |
 

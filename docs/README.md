@@ -33,7 +33,7 @@ Engine docs describe what `packages/engine/src` can do for any game. Game docs d
 | [prefabs.md](prefabs.md) | The prefab contract, helpers, built-in prefabs and their props |
 | [ui.md](ui.md) | The DOM overlay: UI state, components, CSS and font |
 | [testing.md](testing.md) | Unit tests, what each file covers, the dev debug handle, driving the game in a browser |
-| [extending.md](extending.md) | Where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI, and what to update |
+| [extending.md](extending.md) | Where games go, the game generator, moving a game out, and where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI |
 | [deployment.md](deployment.md) | Dokku deploys: buildpacks, `GAME`, `heroku-postbuild`, `deploy` targets, `yarn deploy`, the `deployed` tag, new apps |
 | [releasing.md](releasing.md) | The `shoeboxtheatre` npm package: build, contents, `exports`, peer dependencies, checks and release steps |
 | [known-issues.md](known-issues.md) | Current bugs, limitations, lint warnings and features that don't exist yet |
@@ -55,6 +55,7 @@ Before every commit, match the files you changed against this table and update e
 | `packages/engine/package.json`, `packages/engine/tsconfig.json`, `packages/engine/vite.config.ts` | stack.md, and testing.md for test config |
 | `games/*/package.json`, `games/*/tsconfig.json`, `games/*/vite.config.ts`, `games/*/index.html`, `games/*/public/` | stack.md, and testing.md for test config |
 | `tools/*` | stack.md, and releasing.md for `tools/release-version.sh` |
+| `tools/generators/*` | extending.md (Add a game) |
 | `packages/engine/README.md`, `packages/engine/tsconfig.lib.json`, `LICENSE` | releasing.md |
 | `.buildpacks`, `.dokku.env`, `.static`, `tools/heroku-postbuild.sh`, `tools/deploy.sh`, a game's `deploy` target | deployment.md, README.md (Deployment) |
 | `yarn.lock` | stack.md |
