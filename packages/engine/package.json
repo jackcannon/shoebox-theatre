@@ -1,6 +1,6 @@
 {
   "name": "shoeboxtheatre",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A game engine for 2D sprites in real 3D worlds, built on React Three Fiber.",
   "keywords": [
     "game-engine",
