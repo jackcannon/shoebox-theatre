@@ -51,6 +51,17 @@ const gameConfig: GameConfig = {
 createRoot(document.getElementById('root')!).render(<Shoebox config={gameConfig} />)
 ```
 
+If your game runs tests with Vitest, inline the package, because Vitest otherwise hands it to Node, which can't load its CSS imports:
+
+```ts
+// vite.config.ts
+test: { server: { deps: { inline: ['shoeboxtheatre'] } } }
+```
+
+Yarn 4 installs only package versions that are at least 1 day old. To use a new release at once, add `npmPreapprovedPackages: [shoeboxtheatre]` to `.yarnrc.yml`.
+
+For a new game, the [template repo](https://github.com/jackcannon/shoebox-theatre-game-template) has all of this set up.
+
 Keep `gameConfig` a module-level constant: `Shoebox` creates a new game whenever the `config` object changes.
 
 Pass `debug` (for example `debug={import.meta.env.DEV}`) to expose the running game as `window.__shoebox` for the browser console.

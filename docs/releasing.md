@@ -1,6 +1,6 @@
 # Releasing the engine to npm
 
-The engine is the public npm package `shoeboxtheatre`, built from `packages/engine`. No version is published yet: `packages/engine/package.json` has version `0.0.0`, and the first release will be `0.1.0`. Games in this monorepo use the engine source through `workspace:^` and never need a release. Games in their own repos install a published version.
+The engine is the public npm package `shoeboxtheatre`, built from `packages/engine`. The latest release is `0.1.0` (tag `shoeboxtheatre@0.1.0`). The registry also lists `0.0.0-stage`, a placeholder that npm created for staged publishing when the name was first published. Ignore it; `latest` points to `0.1.0`. Games in this monorepo use the engine source through `workspace:^` and never need a release. Games in their own repos install a published version.
 
 ## The package
 
@@ -23,7 +23,10 @@ The engine is the public npm package `shoeboxtheatre`, built from `packages/engi
 5. After a change to how the package is built or exported, run a smoke test outside the workspace:
    1. `yarn workspace shoeboxtheatre pack --out <folder>/shoeboxtheatre.tgz`
    2. In that folder, make a small Vite React app with its own empty `yarn.lock` (so yarn treats it as a separate project), and install the `.tgz` file and the peer packages.
-   3. Run the quick-start example from `packages/engine/README.md`. Check that it type-checks, renders, and that the location banner has its styles.
+   3. Add the 2 game settings from [deployment.md](deployment.md#games-in-their-own-repos) (Vitest inlining and the yarn pre-approval).
+   4. Run the quick-start example from `packages/engine/README.md`. Check that it type-checks, renders, and that the location banner has its styles.
+
+Games that install the engine from npm also need those 2 settings.
 
 ## Release steps
 
@@ -31,6 +34,7 @@ The engine is the public npm package `shoeboxtheatre`, built from `packages/engi
 2. Build: `yarn nx run shoeboxtheatre:build`.
 3. Log in to npm, if your session has expired: `yarn npm login --web-login`. It opens npm in the browser, where you sign in with 2FA. A session lasts about 2 hours.
 4. Publish: `yarn workspace shoeboxtheatre npm publish`. Add `--otp <code>` if npm asks for a one-time code. `publishConfig.access` is `public`.
+   - npm can stage a publish instead of making it live at once. Check with `yarn npm stage list shoeboxtheatre`, and approve a staged version with `yarn npm stage approve <stageId> --otp <code>`. A new version can take a few minutes to show in `npm view shoeboxtheatre versions`.
 5. Push the commit and the tag: `git push origin master --follow-tags`.
 6. Write the release notes by hand on GitHub, for the new tag. There is no generated changelog.
 

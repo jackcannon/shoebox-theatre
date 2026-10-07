@@ -69,7 +69,7 @@ Each game has a `deploy` target in the `nx` field of its `package.json`:
 
 ## Games in their own repos
 
-A game in its own repo is a normal single-app repo with the same 3 buildpacks. It has no `GAME` variable and no `heroku-postbuild` script:
+A game in its own repo is a normal single-app repo with the same 3 buildpacks. Start one from the template repo, [`jackcannon/shoebox-theatre-game-template`](https://github.com/jackcannon/shoebox-theatre-game-template), which has all of the files below. It has no `GAME` variable and no `heroku-postbuild` script:
 
 - `.buildpacks`: the same 3 buildpack URLs as this repo.
 - `.dokku.env`: `NGINX_ROOT='dist'`.
@@ -78,7 +78,12 @@ A game in its own repo is a normal single-app repo with the same 3 buildpacks. I
 
 The Node buildpack runs `yarn install --immutable` and `yarn run build`, and nginx serves `dist/`. Deploy with `git push --force <dokku remote> master`, after Jack creates the app (`ssh dokku@ssh.cannonbury.co.uk apps:create <app>`).
 
-The game installs a published `shoeboxtheatre` version. To try unreleased engine changes in it:
+The game installs a published `shoeboxtheatre` version. Two settings are needed in every game that installs the engine from npm:
+
+- **Vitest:** `test: { server: { deps: { inline: ['shoeboxtheatre'] } } }` in `vite.config.ts`. Vitest runs tests in Node and normally hands packages straight to Node, which can't load the engine's extensionless and CSS imports. Inlining makes Vite process the package, as it does in the browser build.
+- **Yarn's age gate:** yarn 4 installs only package versions that are at least 1 day old (`npmMinimalAgeGate`, 1440 minutes). Add `npmPreapprovedPackages: [shoeboxtheatre]` to `.yarnrc.yml`, so a new engine release installs at once. Every other package keeps the protection.
+
+To try unreleased engine changes in it:
 
 1. In the game: `yarn link <path to this repo>/packages/engine`. This adds a `portal:` resolution to its `package.json`.
 2. In this repo: `yarn nx run shoeboxtheatre:build` once, then `yarn workspace shoeboxtheatre dev` (`tsc --watch`).

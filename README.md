@@ -514,17 +514,19 @@ Each app sets `GAME` to its game folder, and the root `heroku-postbuild` script 
 ## Make a game
 
 - **A small game in this monorepo:** run `yarn nx g ./tools/generators:game <name>`. It creates `games/<name>` with one map, a map test and a Dokku deploy target. See [docs/extending.md](docs/extending.md#add-a-game).
-- **A big game in its own repo:** install the engine from npm (below). [docs/extending.md](docs/extending.md#which-games-go-where) explains which games go where.
+- **A big game in its own repo:** start from the template repo (below). [docs/extending.md](docs/extending.md#which-games-go-where) explains which games go where.
 
 ## Use the engine in your own game
 
-The engine is set up as the npm package `shoeboxtheatre`. No version is published yet; the first one will be `0.1.0`. A game outside this monorepo will install it with its peer dependencies:
+The engine is published on npm as [`shoeboxtheatre`](https://www.npmjs.com/package/shoeboxtheatre) (latest: `0.1.0`). The quickest start for a game in its own repo is the template repo, [`jackcannon/shoebox-theatre-game-template`](https://github.com/jackcannon/shoebox-theatre-game-template): it installs the engine from npm, has one map, the map test and the Dokku files.
+
+To add the engine to another game, install it with its peer dependencies:
 
 ```bash
 yarn add shoeboxtheatre react react-dom three @react-three/fiber @react-three/postprocessing postprocessing
 ```
 
-[`packages/engine/README.md`](packages/engine/README.md) (the npm page) has a quick start. The package is for bundlers such as Vite, because it imports CSS. How releases work is in [docs/releasing.md](docs/releasing.md).
+[`packages/engine/README.md`](packages/engine/README.md) (the npm page) has a quick start. The package is for bundlers such as Vite, because it imports CSS. A game that installs it also needs 2 settings for Vitest and yarn ([docs/deployment.md](docs/deployment.md#games-in-their-own-repos)). How releases work is in [docs/releasing.md](docs/releasing.md).
 
 ## Credits
 

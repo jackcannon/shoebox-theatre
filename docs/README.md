@@ -34,7 +34,7 @@ Engine docs describe what `packages/engine/src` can do for any game. Game docs d
 | [ui.md](ui.md) | The DOM overlay: UI state, components, CSS and font |
 | [testing.md](testing.md) | Unit tests, what each file covers, the dev debug handle, driving the game in a browser |
 | [extending.md](extending.md) | Where games go, the game generator, moving a game out, and where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI |
-| [deployment.md](deployment.md) | Dokku deploys: buildpacks, `GAME`, `heroku-postbuild`, `deploy` targets, `yarn deploy`, the `deployed` tag, new apps |
+| [deployment.md](deployment.md) | Dokku deploys: buildpacks, `GAME`, `heroku-postbuild`, `deploy` targets, `yarn deploy`, the `deployed` tag, new apps, and games in their own repos (the template repo, Vitest and yarn settings) |
 | [releasing.md](releasing.md) | The `shoeboxtheatre` npm package: build, contents, `exports`, peer dependencies, checks and release steps |
 | [known-issues.md](known-issues.md) | Current bugs, limitations, lint warnings and features that don't exist yet |
 

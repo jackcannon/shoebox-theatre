@@ -26,6 +26,8 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 
 ## Build and lint
 
+- **The npm package is for bundlers only.** Its JavaScript uses extensionless relative imports and imports CSS, so Node can't load it directly. Games that install it from npm must inline it in Vitest ([deployment.md](deployment.md#games-in-their-own-repos)).
+
 
 - **Bundle size.** Vite warns that the single JS chunk is over 500 kB (about 1.32 MB, 368 kB gzipped). There is no code splitting yet.
 - **24 oxlint warnings, 0 errors.** Each was reviewed and none is a real bug; most flag normal R3F patterns:

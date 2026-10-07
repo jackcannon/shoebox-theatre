@@ -50,9 +50,9 @@ Then:
 
 1. Clone the monorepo into a new folder.
 2. Keep only the game's history: `git filter-repo --subdirectory-filter games/<game>`. `git filter-repo` is one Python file: <https://github.com/newren/git-filter-repo>.
-3. Add the files a single-game repo needs: `.yarnrc.yml`, `.gitignore`, `.buildpacks`, `.dokku.env` (`NGINX_ROOT='dist'`), an empty `.static`, and an `AGENTS.md`.
+3. Add the files a single-game repo needs, copied from the template repo ([`jackcannon/shoebox-theatre-game-template`](https://github.com/jackcannon/shoebox-theatre-game-template)): `.yarnrc.yml` (with `npmPreapprovedPackages`), `.gitignore`, `.buildpacks`, `.dokku.env` (`NGINX_ROOT='dist'`), an empty `.static`, `.oxlintrc.json` and `AGENTS.md`.
 4. In `package.json`: change `"shoeboxtheatre": "workspace:^"` to the latest published range, remove the `nx` field, add the `packageManager` field, and add a `lint` script.
-5. In `tsconfig.json`, copy the options from `tsconfig.base.json` without `customConditions`. In `vite.config.ts`, remove the `@shoeboxtheatre/source` conditions. The published package does not include the engine source.
+5. In `tsconfig.json`, copy the options from `tsconfig.base.json` without `customConditions`. In `vite.config.ts`, remove the `@shoeboxtheatre/source` conditions, and inline `shoeboxtheatre` in Vitest ([deployment.md](deployment.md#games-in-their-own-repos)). The published package does not include the engine source.
 6. Run `yarn install`, `yarn test`, `yarn build` and a browser check.
 7. Create the GitHub repo and push.
 8. Ask Jack to run `ssh dokku@ssh.cannonbury.co.uk config:unset --no-restart <app> GAME`, then deploy from the new repo.
