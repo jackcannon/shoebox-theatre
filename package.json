@@ -13,7 +13,10 @@
     "test": "nx run-many -t test",
     "lint": "oxlint",
     "preview": "nx run mossvale:preview",
-    "release:version": "bash tools/release-version.sh"
+    "release:version": "bash tools/release-version.sh",
+    "heroku-postbuild": "bash tools/heroku-postbuild.sh",
+    "deploy": "bash tools/deploy.sh",
+    "deploy:all": "bash tools/deploy.sh --all"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

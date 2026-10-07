@@ -63,6 +63,8 @@ Root scripts (run them from the repo root):
 | `yarn build` | `nx run-many -t typecheck build`: `tsc -p tsconfig.json` in every project, then each project's `build`. Mossvale builds into `games/mossvale/dist/`, and the engine into `packages/engine/dist/`. |
 | `yarn lint` | `oxlint` over the repo |
 | `yarn preview` | `nx run mossvale:preview`: serves `games/mossvale/dist/` |
+| `yarn deploy`, `yarn deploy:all` | `tools/deploy.sh`: deploys the affected games, or all games, to Dokku ([deployment.md](deployment.md)) |
+| `yarn heroku-postbuild` | `tools/heroku-postbuild.sh`: the Dokku build of the game named by `GAME` ([deployment.md](deployment.md)) |
 | `yarn release:version <bump>` | `tools/release-version.sh`: bumps the engine version, commits and tags it ([releasing.md](releasing.md)) |
 
 Project scripts (run one with `yarn nx run <project>:<target>`):
@@ -94,25 +96,14 @@ Mossvale's build prints a Vite advisory that the single JS chunk is over 500 kB 
 
 ## Deployment
 
-**Do not deploy the monorepo yet.** The buildpacks still run the root `yarn run build`, which writes `games/mossvale/dist/`, while nginx serves the root `dist/`. A deploy would fail or serve nothing. The monorepo deploy setup is not in place yet.
+Games deploy to Dokku with buildpacks; [deployment.md](deployment.md) describes the whole flow. Facts about the Node buildpack (`jackcannon/heroku-buildpack-node`) that matter for the stack:
 
-The game deploys to Dokku as a static site. The server builds it from source on every push; `dist/` is not committed. Three files at the repo root control the build, and there is no `Procfile`:
-
-- **`.buildpacks`** lists the buildpacks Dokku runs, in this order:
-  1. `https://github.com/jackcannon/heroku-buildpack-env` loads `.dokku.env` into the build environment.
-  2. `https://github.com/jackcannon/heroku-buildpack-node` installs Node, sees a yarn 4 lockfile (the `__metadata` header), enables corepack and installs the yarn version from `packageManager`, runs `yarn install --immutable`, then `yarn run build`, which writes `dist/`. It fails if `.yarnrc.yml` is missing.
-  3. `https://github.com/jackcannon/heroku-buildpack-nginx` compiles nginx, moves the app into `/app/www`, and makes nginx the `web` process.
-- **`.dokku.env`** sets `NGINX_ROOT='dist'`, so nginx serves `/app/www/dist`. The file is committed, so it must never hold secrets.
-- **`.static`** is empty. The nginx buildpack only runs when it exists.
-
-Constraints:
-
-- `package.json` has no `engines` field, so the Node buildpack installs its default Node 22.x line, which satisfies Vite 8 and includes corepack. Node 25 and later do not include corepack, so the build would fail on them.
-- The Node buildpack stops with "Multiple lockfiles found" if `yarn.lock` sits next to a `package-lock.json` or `pnpm-lock.yaml`. `npm install` creates a `package-lock.json` and rewrites `yarn.lock`, so install dependencies with yarn only.
-- `yarn install --immutable` fails if `yarn.lock` doesn't match `package.json`. Commit `yarn.lock` with every dependency change.
-- nginx uses the buildpack's default config: an unknown path returns 404, not `index.html`. The game has no client-side routes, so nothing needs that fallback.
-
-To deploy, push `master` to the Dokku remote: `git push <dokku-remote> master`.
+- It sees a yarn 4 lockfile (the `__metadata` header), enables corepack, installs the yarn version from `packageManager`, and runs `yarn install --immutable`. It fails if `.yarnrc.yml` is missing.
+- It runs the root `heroku-postbuild` script instead of `build` when both exist.
+- `package.json` has no `engines` field, so it installs its default Node 22.x line, which satisfies Vite 8 and includes corepack. Node 25 and later do not include corepack, so the build would fail on them.
+- It stops with "Multiple lockfiles found" if `yarn.lock` sits next to a `package-lock.json` or `pnpm-lock.yaml`. `npm install` creates a `package-lock.json` and rewrites `yarn.lock`, so install dependencies with yarn only.
+- `yarn install --immutable` fails if `yarn.lock` doesn't match the `package.json` files. Commit `yarn.lock` with every dependency change.
+- nginx uses the nginx buildpack's default config: an unknown path returns 404, not `index.html`. The games have no client-side routes, so nothing needs that fallback.
 
 ## Why this stack
 

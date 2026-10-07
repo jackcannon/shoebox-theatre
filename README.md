@@ -502,21 +502,14 @@ __shoebox.flags.set('metMom')
 
 ## Deployment
 
-**Do not deploy the monorepo yet.** The Dokku build still runs the root `yarn build`, which writes `games/mossvale/dist/`, while nginx serves the root `dist/`. See [docs/stack.md](docs/stack.md#deployment).
-
-The game deploys to [Dokku](https://dokku.com) as a static site. Buildpacks install the dependencies with yarn 4, run `yarn build`, and serve `dist/` with nginx. The files involved:
-
-- `.buildpacks`: the env, Node and nginx buildpacks, in that order.
-- `.dokku.env`: sets `NGINX_ROOT='dist'`.
-- `.static`: an empty file that enables the nginx buildpack.
-
-Push `master` to your Dokku remote to deploy:
+Each game deploys to its own [Dokku](https://dokku.com) app as a static site, built on the server with buildpacks. Mossvale is at [mossvale.cannonbury.co.uk](https://mossvale.cannonbury.co.uk). From a clean, pushed `master`:
 
 ```bash
-git push <dokku-remote> master
+yarn deploy       # deploy the games affected since the last deploy
+yarn deploy:all   # deploy every game
 ```
 
-See [docs/stack.md](docs/stack.md#deployment) for how the buildpacks work.
+Each app sets `GAME` to its game folder, and the root `heroku-postbuild` script builds that game. See [docs/deployment.md](docs/deployment.md).
 
 ## Use the engine in your own game
 

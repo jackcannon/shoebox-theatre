@@ -22,7 +22,7 @@ Engine docs describe what `packages/engine/src` can do for any game. Game docs d
 
 | Doc | Covers |
 |---|---|
-| [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output, Dokku deployment |
+| [stack.md](stack.md) | Dependencies, versions, yarn scripts, TypeScript/Vite/Vitest/oxlint config, build output, Dokku buildpack facts |
 | [architecture.md](architecture.md) | Folder map, dependency rules, `GameRuntime` vs the UI store, startup and map loading, frame order, registries, public API |
 | [coordinates-and-units.md](coordinates-and-units.md) | World axes, tile and footprint coordinates, heights, prefab local space, texel density |
 | [world.md](world.md) | `TileMap`, tile types and surfaces, `World`, `Character`, movement and collision, NPC AI, interaction, warps, triggers |
@@ -34,6 +34,7 @@ Engine docs describe what `packages/engine/src` can do for any game. Game docs d
 | [ui.md](ui.md) | The DOM overlay: UI state, components, CSS and font |
 | [testing.md](testing.md) | Unit tests, what each file covers, the dev debug handle, driving the game in a browser |
 | [extending.md](extending.md) | Where to add maps, NPCs, tiles, surfaces, textures, decorations, prefabs and UI, and what to update |
+| [deployment.md](deployment.md) | Dokku deploys: buildpacks, `GAME`, `heroku-postbuild`, `deploy` targets, `yarn deploy`, the `deployed` tag, new apps |
 | [releasing.md](releasing.md) | The `shoeboxtheatre` npm package: build, contents, `exports`, peer dependencies, checks and release steps |
 | [known-issues.md](known-issues.md) | Current bugs, limitations, lint warnings and features that don't exist yet |
 
@@ -55,7 +56,8 @@ Before every commit, match the files you changed against this table and update e
 | `games/*/package.json`, `games/*/tsconfig.json`, `games/*/vite.config.ts`, `games/*/index.html`, `games/*/public/` | stack.md, and testing.md for test config |
 | `tools/*` | stack.md, and releasing.md for `tools/release-version.sh` |
 | `packages/engine/README.md`, `packages/engine/tsconfig.lib.json`, `LICENSE` | releasing.md |
-| `.buildpacks`, `.dokku.env`, `.static`, `yarn.lock` | stack.md (Deployment), README.md (Deployment) |
+| `.buildpacks`, `.dokku.env`, `.static`, `tools/heroku-postbuild.sh`, `tools/deploy.sh`, a game's `deploy` target | deployment.md, README.md (Deployment) |
+| `yarn.lock` | stack.md |
 | `games/mossvale/src/main.tsx`, `games/mossvale/src/App.tsx`, `packages/engine/src/Shoebox.tsx`, `packages/engine/src/index.ts`, `packages/engine/src/types.ts`, `packages/engine/src/math.ts` | architecture.md, plus the subsystem doc for any type you changed |
 | `packages/engine/src/core/GameRuntime.ts` | architecture.md, scripting.md, world.md (interaction, warps, triggers) |
 | `packages/engine/src/core/Input.ts` | architecture.md (input), README.md (controls), ui.md if the controls hint text changes |

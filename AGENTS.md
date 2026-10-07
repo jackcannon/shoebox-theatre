@@ -106,6 +106,7 @@ The full reasoning is in [docs/architecture.md](docs/architecture.md).
   - Keep one logical change per commit, with a short imperative subject line.
 - Never commit `node_modules/`, `dist/`, `.agent-files/`, `.agent-tmp/`, secrets or large binaries.
 - Never publish to npm (`yarn npm publish`) or run `yarn release:version` without the user's approval. A published version can't be taken back.
+- Never deploy (`yarn deploy`, `yarn deploy:all` or a push to a Dokku remote) without the user's approval. Never run commands on the Dokku server; ask the user to run them.
 
 ## 9. Content and assets
 
