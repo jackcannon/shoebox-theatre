@@ -90,7 +90,7 @@ Every decoration is instanced: one `InstancedMesh` per geometry, with per-instan
   - The light sits 60 units from the map centre along that direction.
   - Its orthographic shadow camera is fitted to the whole map plus border, with extent `hypot(w/2 + border, h/2 + border) + 1`.
   - The shadow map is 4096² when the extent is over 14, otherwise 2048². `shadow-bias` is −0.0004 and `normalBias` is 0.025.
-- **`lights: PointLightDefinition[]`** are non-shadowing point lights. They default to colour `#ffcf8a`, intensity 12, distance 8 and decay 2. `flicker: true` makes the intensity waver with `runtime.time`. They are physically based, so intensities of about 6–12 read well.
+- **`lights: PointLightDefinition[]`** are non-shadowing point lights. They default to colour `#ffcf8a`, intensity 12, distance 8 and decay 2. `flicker: true` makes the intensity waver with `runtime.time`. They are physically based, so intensities of about 6 to 12 read well.
 
 Prefabs can add their own lights too; each `lamp` adds a point light.
 
@@ -124,7 +124,7 @@ Prefabs can add their own lights too; each `lamp` adds a point light.
 | `Vignette` | offset 0.3, darkness `postfx.vignette` (default 0.55) |
 
 - **Tilt-shift focus line:** every frame, the player's position plus 0.8 up is projected to the screen. Both tilt-shift passes get `start = [0, y]` and `end = [1, y]`, a horizontal focus line at the player's screen height, with y clamped to 0.2..0.8. `TiltShift2` blurs away from the line from `start` to `end`, and its default is a vertical line, which is why the line is set explicitly.
-- **Bloom threshold 0.85:** anything meant to glow (lamps, screens, crystals, window glass, water glints) needs emissive or colour output above about 1, for example `emissiveIntensity` of 1.5–3.
+- **Bloom threshold 0.85:** anything meant to glow (lamps, screens, crystals, window glass, water glints) needs emissive or colour output above about 1, for example `emissiveIntensity` of 1.5 to 3.
 - **Tone mapping:** `EffectComposer` sets the renderer's tone mapping to none, so the `ToneMapping` effect does it. ACES was chosen over AgX, which looked grey and flat in testing.
 - `environment.postfx` overrides the defaults per map. The demo interiors use `tiltShift: 0.07`.
 

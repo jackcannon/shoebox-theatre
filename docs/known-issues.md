@@ -14,7 +14,7 @@ Keep this list current. When you fix an item, remove it. When you find or introd
 - **Collision is 2D.** Tile `height` is visual only. There are no jumps, ramps with collision or multi-level maps.
 - **Gameplay facing is 4 ways only**, although movement is 8-way. Interaction, warps and scripts use the 4-way `facing`; only sprites on 8-row sheets show diagonals, from `heading`.
 - **Character pixels don't match the world's.** Sheets from `characterModelSheet` are drawn at 21 px per tile, so their pixels are about three-quarters the size of every other texture's.
-- **Character sheets render on the main thread.** Each `characterModelSheet` takes about 50–120 ms to sphere-trace, about 0.6 s for the demo's nine. `AssetManager.preload` calls every `draw` source synchronously in one pass, so the page doesn't respond and the loading progress doesn't move until they're all painted.
+- **Character sheets render on the main thread.** Each `characterModelSheet` takes about 50 to 120 ms to sphere-trace, about 0.6 s for the demo's nine. `AssetManager.preload` calls every `draw` source synchronously in one pass, so the page doesn't respond and the loading progress doesn't move until they're all painted.
 - **Character models are left-right symmetric.** Left-facing rows are mirrored from right-facing ones, so asymmetric details swap sides when a character turns.
 - **`generatedCharacter` is unused by the demo.** The pixel-grid generator and its test remain in the engine's public API, but every Mossvale character uses `characterModelSheet`.
 - **NPC AI is local:** random turning and 1-tile steps, with no pathfinding or schedules. Scripted `walk` ignores collision.

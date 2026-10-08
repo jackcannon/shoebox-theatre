@@ -79,7 +79,7 @@ Every interior has a wall on row 0, walls down both sides and no front wall. Its
   - Pip, `kid` at `(19,9)`, wanders with radius 3
   - Wade, `fisher` at `(12,20)` on the dock, idle and facing down
 - **North exit trigger:** `x 9, y 1, w 6`. It says two lines about tall grass and walks the player one tile back down.
-- **South edge:** sand, then sea, with a 2×2-tile dock (columns 11–12, rows 19–20) running out from the central path. Sand tiles set `side: 'sand'` so the drop to the water is sand rather than the grassy `bank` lip. The forest and sea continue into the 6-tile border.
+- **South edge:** sand, then sea, with a 2×2-tile dock (columns 11 and 12, rows 19 and 20) running out from the central path. Sand tiles set `side: 'sand'` so the drop to the water is sand rather than the grassy `bank` lip. The forest and sea continue into the 6-tile border.
 
 ## Links between maps
 
@@ -89,8 +89,8 @@ Every interior has a wall on row 0, walls down both sides and no front wall. Its
 | `town` | (17,7) | up | `neighbourHouse` | (5,7) | up |
 | `town` | (16,15) | up | `lab` | (7,11) | up |
 | `playerHouse1F` | (5,7) | down | `town` | (5,7) | down |
-| `playerHouse1F` | (9,1) | — (stairs) | `playerHouse2F` | (8,2) | down |
-| `playerHouse2F` | (8,1) | — (stairs) | `playerHouse1F` | (9,2) | down |
+| `playerHouse1F` | (9,1) | none (stairs) | `playerHouse2F` | (8,2) | down |
+| `playerHouse2F` | (8,1) | none (stairs) | `playerHouse1F` | (9,2) | down |
 | `neighbourHouse` | (5,7) | down | `town` | (17,7) | down |
 | `lab` | (7,11) | down | `town` | (16,15) | down |
 
@@ -101,9 +101,9 @@ Stairs arrivals are one tile south of the other floor's stairs tile, so arriving
 | Where | Script | Flag |
 |---|---|---|
 | Mom (`playerHouse1F`) | First talk: two pages, then sets `metMom`. Later: "Don't keep the professor waiting!…" | `metMom` |
-| Bed (`playerHouse2F`) | `choice('Take a quick nap?', ['Yes', 'No'])`. Yes: fade out 500 ms, wait 700, fade in 500, then "You feel refreshed!" | — |
+| Bed (`playerHouse2F`) | `choice('Take a quick nap?', ['Yes', 'No'])`. Yes: fade out 500 ms, wait 700, fade in 500, then "You feel refreshed!" | none |
 | Pedestal (`lab`) | One line about the humming crystals, then sets `touchedCrystals` | `touchedCrystals` |
 | Prof. Hawthorne (`lab`) | If `touchedCrystals`: "…I saw that. Please don't poke the crystals." Then `choice('Would you like to hear about my research?', ['Yes', 'No'])`. Yes gives three research pages; No gives "Another time, then!…" | reads `touchedCrystals` |
-| North trigger (`town`) | Two lines, then `ctx.player.walk('down', 1)` | — |
+| North trigger (`town`) | Two lines, then `ctx.player.walk('down', 1)` | none |
 
 Every other NPC uses a `dialogue` string or array, and every other interactive object uses `text`.

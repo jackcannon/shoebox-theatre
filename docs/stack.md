@@ -23,7 +23,7 @@ There is no router, CSS framework, state library other than zustand, or R3F help
 | `typescript` | 6.0 | Type checking (`tsc -p tsconfig.json` in each project). TypeScript 6 enables `strict` by default, so the tsconfigs don't set it |
 | `vitest` | 4 | Unit tests in a node environment |
 | `oxlint` | 1 | Linting |
-| `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | — | Types |
+| `@types/react`, `@types/react-dom`, `@types/three`, `@types/node` | matching their libraries | Types |
 
 Node must satisfy Vite 8's engine range: `^20.19.0 || >=22.12.0`.
 

@@ -473,7 +473,7 @@ camera: { fov: 28, pitch: 35, distance: 20 },
 
 - `background`, `fog { color, near, far }`, `ambient` and `hemisphere` set the base mood.
 - `sun` is the only shadow-casting light. `direction` points from the scene towards the sun, and the shadow camera is fitted to the whole map and border automatically.
-- `lights` are point lights (default colour `#ffcf8a`, intensity 12, distance 8). They are physically based, so intensities of about 6–12 read well. `flicker: true` makes them waver like a flame.
+- `lights` are point lights (default colour `#ffcf8a`, intensity 12, distance 8). They are physically based, so intensities of about 6 to 12 read well. `flicker: true` makes them waver like a flame.
 - `particles { count, color, size }` adds drifting motes around the player: pollen outdoors, dust indoors.
 - `postfx` defaults are bloom 0.55, tiltShift 0.12 (blur strength; the focus line follows the player), vignette 0.55 and saturation 0 (range −1 to 1). Fixed values such as the bloom threshold, the tilt-shift taper and the ACES tone mapping live in `packages/engine/src/render/PostEffects.tsx`.
 - `camera` defaults to fov 30, pitch 40 (degrees below the horizon) and distance 18 (`DEFAULT_CAMERA` in `render/camera.ts`). The sprite stretch follows the pitch automatically. The camera is clamped to keep the view inside the map and its border, and it centres maps that are smaller than the view.

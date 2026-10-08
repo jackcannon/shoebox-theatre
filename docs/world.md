@@ -28,7 +28,7 @@ A `TileType` describes what one ASCII character means:
 | `side` | `ground` | Surface id for vertical faces exposed where a neighbour is lower (`'none'` skips them) |
 | `height` | 0 | Top-face height in world units |
 | `solid` | false | Blocks movement |
-| `decoration` | — | Decoration id rendered on the tile (for example `tree`) |
+| `decoration` | none | Decoration id rendered on the tile (for example `tree`) |
 | `water` | false | Draws the animated water surface over the tile |
 
 A **surface** (`SurfaceDefinition`) is `{ texture, anchor?, color?, roughness? }`. `texture` is a registered texture id. `anchor: 'top'` pins the texture's top edge to the top of side faces, for the grassy lip of banks and cliffs. Otherwise the texture is pinned to the bottom of the face, for wallpaper skirting. `roughness` defaults to 0.95 in `Terrain`.
@@ -115,7 +115,7 @@ The player's movement:
 | `look` | Turns to a random direction every `interval` seconds (default 3) |
 | `wander` | Turns like `look` (default interval 2.2), then tries a 1-tile step in that direction if the tile is within `radius` of its home tile on both axes |
 
-Each interval is randomised to 60–140%. NPCs walk at 2.2 tiles/s. A wandering NPC won't step onto a tile that is solid, has a warp, has a trigger, is occupied by or reserved by another NPC, or is within `player.radius + 0.5` of the player on both axes.
+Each interval is randomised to 60% to 140%. NPCs walk at 2.2 tiles/s. A wandering NPC won't step onto a tile that is solid, has a warp, has a trigger, is occupied by or reserved by another NPC, or is within `player.radius + 0.5` of the player on both axes.
 
 ## Interaction
 

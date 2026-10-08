@@ -159,7 +159,7 @@ Everything runs inside R3F `useFrame` callbacks. Lower priority numbers run firs
 
 | Action | Keys | Gamepad (standard mapping) |
 |---|---|---|
-| Move | Arrow keys, WASD | Left stick (deadzone 0.25), d-pad buttons 12–15 |
+| Move | Arrow keys, WASD | Left stick (deadzone 0.25), d-pad buttons 12 to 15 |
 | `confirm` | Space, Enter, Z, E | Button 0 |
 | `cancel` | Escape, X, Backspace | Button 1 |
 | `run` (hold) | Left/right Shift | Button 2 |
@@ -175,11 +175,11 @@ Everything content-specific comes in through `GameConfig` (`types.ts`):
 
 | Field | Type | Merged with |
 |---|---|---|
-| `title` | `string` | — (loading screen) |
-| `start` | `WarpTarget` | — |
-| `player` | `{ sprite, walkSpeed?, runSpeed? }` | — (speeds default 3.6 and 6.2 tiles/s) |
-| `maps` | `Record<string, MapDefinition>` | — |
-| `characters` | `Record<string, SpriteSheetDefinition>` | — |
+| `title` | `string` | nothing (shown on the loading screen) |
+| `start` | `WarpTarget` | nothing |
+| `player` | `{ sprite, walkSpeed?, runSpeed? }` | nothing (speeds default 3.6 and 6.2 tiles/s) |
+| `maps` | `Record<string, MapDefinition>` | nothing |
+| `characters` | `Record<string, SpriteSheetDefinition>` | nothing |
 | `textures?` | `Record<string, TextureSource>` | `BUILTIN_TEXTURES` |
 | `surfaces?` | `Record<string, SurfaceDefinition>` | `DEFAULT_SURFACES` |
 | `decorations?` | `Record<string, DecorationComponent>` | `DEFAULT_DECORATIONS` |
